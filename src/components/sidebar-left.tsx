@@ -52,7 +52,7 @@ export function SidebarLeft() {
         <Button
           className="w-full justify-center"
           onClick={handleNewChat}
-          variant="ghost"
+          variant="outline"
         >
           <PlusIcon className="size-4" />
           New Chat

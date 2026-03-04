@@ -5,7 +5,13 @@ import {
   ChatCircleIcon,
   FolderIcon,
   GearIcon,
+  MinusIcon,
+  SquareIcon,
+  SquaresFourIcon,
+  XIcon,
 } from "@phosphor-icons/react";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { useCallback, useEffect, useState } from "react";
 import { TerminalLayoutIcon } from "@/components/terminal-layout-icons";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +49,38 @@ const TERMINAL_LAYOUT_OPTIONS: { mode: TerminalLayoutMode; label: string }[] = [
   { mode: "center-left", label: "Center + left sidebar" },
 ];
 
+function useIsMaximized() {
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  const update = useCallback(async () => {
+    try {
+      const maximized = await getCurrentWebviewWindow().isMaximized();
+      setIsMaximized(maximized);
+    } catch {
+      /* not in Tauri */
+    }
+  }, []);
+
+  useEffect(() => {
+    update();
+    let unlisten: (() => void) | undefined;
+    void (async () => {
+      try {
+        unlisten = await getCurrentWebviewWindow().listen("tauri://resize", update);
+      } catch {
+        /* not in Tauri */
+      }
+    })();
+    return () => {
+      unlisten?.();
+    };
+  }, [update]);
+
+  return isMaximized;
+}
+
 export function Titlebar() {
+  const isMaximized = useIsMaximized();
   const {
     activeProject,
     selectedModel,
@@ -100,7 +137,7 @@ export function Titlebar() {
           value={model.id}
         >
           <SelectTrigger
-            className="h-7 min-w-0 border-0 bg-transparent px-2 text-xs hover:bg-[var(--bg-elevated)]"
+            className="h-7 min-w-0 border-0 bg-transparent px-2 text-xs hover:bg-(--bg-elevated)"
             size="sm"
           >
             <SelectValue />
@@ -118,8 +155,8 @@ export function Titlebar() {
             render={
               <Button
                 className={cn(
-                  "text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
-                  sidebarLeftVisible && "text-[var(--accent)]"
+                  "text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
+                  sidebarLeftVisible && "text-accent"
                 )}
                 onClick={toggleSidebarLeft}
                 size="icon-sm"
@@ -130,7 +167,7 @@ export function Titlebar() {
             }
           />
           <TooltipContent
-            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
+            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
             side="bottom"
           >
             Toggle chats (Ctrl+L)
@@ -141,8 +178,8 @@ export function Titlebar() {
             render={
               <Button
                 className={cn(
-                  "text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
-                  sidebarRightVisible && "text-[var(--accent)]"
+                  "text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
+                  sidebarRightVisible && "text-accent"
                 )}
                 onClick={toggleSidebarRight}
                 size="icon-sm"
@@ -153,7 +190,7 @@ export function Titlebar() {
             }
           />
           <TooltipContent
-            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
+            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
             side="bottom"
           >
             Toggle files (Ctrl+B)
@@ -167,8 +204,8 @@ export function Titlebar() {
                   render={
                     <Button
                       className={cn(
-                        "gap-0.5 text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
-                        terminalVisible && "text-[var(--accent)]"
+                        "gap-0.5 text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
+                        terminalVisible && "text-accent"
                       )}
                       size="icon-sm"
                       variant="ghost"
@@ -180,7 +217,7 @@ export function Titlebar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="min-w-[220px] border-[var(--border-subtle)] bg-[var(--bg-overlay)]"
+                  className="min-w-[220px] border-(--border-subtle) bg-(--bg-overlay)"
                 >
                   <DropdownMenuRadioGroup
                     onValueChange={(v) => {
@@ -210,7 +247,7 @@ export function Titlebar() {
             }
           />
           <TooltipContent
-            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
+            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
             side="bottom"
           >
             Terminal layout (Ctrl+`)
@@ -220,7 +257,7 @@ export function Titlebar() {
           <TooltipTrigger
             render={
               <Button
-                className="text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
+                className="text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
                 onClick={() => setSettingsOpen(true)}
                 size="icon-sm"
                 variant="ghost"
@@ -230,12 +267,63 @@ export function Titlebar() {
             }
           />
           <TooltipContent
-            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
+            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
             side="bottom"
           >
             Settings
           </TooltipContent>
         </Tooltip>
+        <div
+          className="ml-2 flex items-center border-l pl-2"
+            style={{ borderColor: "var(--border-subtle)" }}
+        >
+            <button
+            className="flex size-8 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-elevated) hover:text-(--text-primary) cursor-pointer"
+            onClick={async () => {
+              try {
+                await getCurrentWebviewWindow().minimize();
+              } catch {
+                /* not in Tauri */
+              }
+            }}
+            title="Minimize"
+            type="button"
+          >
+            <MinusIcon className="size-4" weight="bold" />
+          </button>
+          <button
+            className="flex size-8 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--bg-elevated) hover:text-(--text-primary) cursor-pointer"
+            onClick={() => {
+              try {
+                getCurrentWebviewWindow().toggleMaximize();
+              } catch {
+                /* not in Tauri */
+              }
+            }}
+            title={isMaximized ? "Restore" : "Maximize"}
+            type="button"
+          >
+            {isMaximized ? (
+              <SquaresFourIcon className="size-3.5" weight="regular" />
+            ) : (
+              <SquareIcon className="size-3.5" weight="regular" />
+            )}
+          </button>
+          <button
+            className="flex size-8 items-center justify-center rounded-lg text-(--text-secondary) transition-colors hover:bg-(--error)/20 hover:text-(--error) cursor-pointer"
+            onClick={async () => {
+              try {
+                await getCurrentWebviewWindow().close();
+              } catch {
+                /* not in Tauri */
+              }
+            }}
+            title="Close"
+            type="button"
+          >
+            <XIcon className="size-4" weight="bold" />
+          </button>
+        </div>
       </div>
     </header>
   );
