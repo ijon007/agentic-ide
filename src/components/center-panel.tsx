@@ -10,9 +10,10 @@ import {
 import { useApp } from "@/context/app-context";
 
 export function CenterPanel() {
-  const { openFiles, openChats } = useApp();
+  const { openFiles, openChats, codePanelVisible } = useApp();
   const hasFiles = openFiles.length > 0;
   const hasChats = openChats.length > 0;
+  const showCodePanel = codePanelVisible && hasFiles;
 
   if (!(hasChats || hasFiles)) {
     return (
@@ -30,7 +31,7 @@ export function CenterPanel() {
     );
   }
 
-  if (hasChats && !hasFiles) {
+  if (hasChats && !showCodePanel) {
     return (
       <main className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
         <ChatView />
@@ -42,6 +43,14 @@ export function CenterPanel() {
     return (
       <main className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
         <EditorView />
+      </main>
+    );
+  }
+
+  if (!showCodePanel) {
+    return (
+      <main className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
+        <ChatView />
       </main>
     );
   }

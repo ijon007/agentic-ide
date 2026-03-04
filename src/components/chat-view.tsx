@@ -1,20 +1,17 @@
 "use client";
 
 import {
-  ChatCircleIcon,
   CheckCircleIcon,
   CheckIcon,
   CopyIcon,
   GearIcon,
   PaperPlaneTiltIcon,
   StopIcon,
-  XIcon,
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { MOCK_CHATS } from "@/constants/chats";
 import { MOCK_MESSAGES } from "@/constants/messages";
 import { MOCK_MODELS } from "@/constants/models";
 import { useApp } from "@/context/app-context";
@@ -241,17 +238,8 @@ function DiffBlock({
   );
 }
 
-function getChatTitle(id: string): string {
-  if (id.startsWith("new-")) {
-    return "New Chat";
-  }
-  const chat = MOCK_CHATS.find((c) => c.id === id);
-  return chat?.title ?? "Chat";
-}
-
 export function ChatView() {
-  const { selectedModel, openChats, activeChat, setActiveChat, closeChat } =
-    useApp();
+  const { selectedModel } = useApp();
   const [input, setInput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -267,70 +255,12 @@ export function ChatView() {
     el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
   }, []);
 
-  const handleCloseChat = (e: React.MouseEvent, id: string) => {
-    e.stopPropagation();
-    closeChat(id);
-  };
-
   return (
     <div
       className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
       data-panel="chat"
       style={{ backgroundColor: "var(--bg-base)" }}
     >
-      {openChats.length > 0 && (
-        <div
-          className="flex h-9 min-w-0 shrink-0"
-          style={{ backgroundColor: "var(--bg-surface)" }}
-        >
-          <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden scrollbar-hidden">
-            <div className="flex h-full shrink-0 items-stretch">
-              {openChats.map((id) => {
-                const isActive = activeChat === id;
-                return (
-                  <div
-                className={cn(
-                  "group flex shrink-0 cursor-pointer items-center gap-2 border-r px-3 py-1.5 text-xs transition-colors",
-                  !isActive && "border-b"
-                )}
-                    key={id}
-                    onClick={() => setActiveChat(id)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setActiveChat(id);
-                      }
-                    }}
-                    role="tab"
-                    style={{
-                      borderColor: "var(--border-subtle)",
-                      color: isActive ? "var(--text-primary)" : "var(--text-muted)",
-                      backgroundColor: isActive ? "var(--bg-base)" : "transparent",
-                    }}
-                    tabIndex={0}
-                  >
-                    <ChatCircleIcon className="size-3 shrink-0" />
-                    <span className="max-w-[140px] truncate">
-                      {getChatTitle(id)}
-                    </span>
-                    <button
-                      className={cn(
-                        "cursor-pointer",
-                        isActive ? "opacity-70" : "opacity-0 group-hover:opacity-70"
-                      )}
-                      onClick={(e) => handleCloseChat(e, id)}
-                      title="Close chat (Ctrl+W)"
-                      type="button"
-                    >
-                      <XIcon className="size-3" />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-4 p-4">
           {MOCK_MESSAGES.map((msg) => (

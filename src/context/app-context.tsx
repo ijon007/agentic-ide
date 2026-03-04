@@ -14,10 +14,14 @@ export type TerminalLayoutMode =
   | "center-right"
   | "center-left";
 
+type FocusedCenterPanel = "chat" | "editor" | null;
+
 interface AppState {
   activeChat: string | null;
   activeFile: string | null;
   activeProject: string | null;
+  codePanelVisible: boolean;
+  focusedCenterPanel: FocusedCenterPanel;
   openChats: string[];
   openFiles: string[];
   selectedModel: string;
@@ -42,6 +46,7 @@ interface AppContextValue extends AppState {
   setSettingsOpen: (open: boolean) => void;
   setTerminalLayoutMode: (mode: TerminalLayoutMode) => void;
   setTerminalVisible: (visible: boolean) => void;
+  toggleCodePanel: () => void;
   toggleSidebarLeft: () => void;
   toggleSidebarRight: () => void;
   toggleTerminal: () => void;
@@ -56,6 +61,8 @@ const initialState: AppState = {
   selectedModel: "gpt-4o",
   openFiles: [],
   activeFile: null,
+  codePanelVisible: true,
+  focusedCenterPanel: null,
   terminalVisible: false,
   terminalLayoutMode: "full",
   sidebarLeftVisible: true,
@@ -90,6 +97,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, activeFile: path }));
   }, []);
 
+  const setFocusedCenterPanel = useCallback((panel: FocusedCenterPanel) => {
+    setState((s) => ({ ...s, focusedCenterPanel: panel }));
+  }, []);
+
   const setTerminalVisible = useCallback((visible: boolean) => {
     setState((s) => ({ ...s, terminalVisible: visible }));
   }, []);
@@ -111,6 +122,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         ...s,
         openFiles,
         activeFile: path,
+        codePanelVisible: true,
       };
     });
   }, []);
@@ -166,6 +178,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, sidebarRightVisible: !s.sidebarRightVisible }));
   }, []);
 
+  const toggleCodePanel = useCallback(() => {
+    setState((s) => ({ ...s, codePanelVisible: !s.codePanelVisible }));
+  }, []);
+
   const value: AppContextValue = {
     ...state,
     setActiveProject,
@@ -181,6 +197,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     closeFile,
     openChat,
     closeChat,
+    setFocusedCenterPanel,
+    toggleCodePanel,
     toggleTerminal,
     toggleSidebarLeft,
     toggleSidebarRight,

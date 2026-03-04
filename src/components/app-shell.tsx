@@ -66,12 +66,32 @@ function MainContentLayout() {
     sidebarRightVisible,
     toggleSidebarLeft,
     toggleSidebarRight,
+    toggleCodePanel,
   } = useApp();
 
-  const { closeChat, activeChat, openChat, openChats } = useApp();
+  const {
+    closeChat,
+    activeChat,
+    openChat,
+    openChats,
+    closeFile,
+    activeFile,
+  } = useApp();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "w") {
+        e.preventDefault();
+        const chatPanel = document.querySelector('[data-panel="chat"]');
+        const editorPanel = document.querySelector('[data-panel="editor"]');
+        const activeEl = document.activeElement;
+        if (chatPanel?.contains(activeEl) && activeChat) {
+          closeChat(activeChat);
+        } else if (editorPanel?.contains(activeEl) && activeFile) {
+          closeFile(activeFile);
+        }
+        return;
+      }
       if ((e.metaKey || e.ctrlKey) && e.key === "`") {
         e.preventDefault();
         toggleTerminal();
@@ -96,6 +116,15 @@ function MainContentLayout() {
         e.preventDefault();
         toggleSidebarLeft();
       }
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "b"
+      ) {
+        e.preventDefault();
+        toggleCodePanel();
+        return;
+      }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
         e.preventDefault();
         toggleSidebarRight();
@@ -107,10 +136,13 @@ function MainContentLayout() {
     toggleTerminal,
     toggleSidebarLeft,
     toggleSidebarRight,
+    toggleCodePanel,
     closeChat,
     activeChat,
     openChat,
     openChats,
+    closeFile,
+    activeFile,
   ]);
 
   const showTerminal = terminalVisible;
