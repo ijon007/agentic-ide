@@ -1,11 +1,12 @@
 "use client";
 
 import {
-  CaretDownIcon,
   ChatCircleIcon,
   FolderIcon,
   GearIcon,
+  GearSixIcon,
   MinusIcon,
+  SidebarIcon,
   SquareIcon,
   SquaresFourIcon,
   XIcon,
@@ -128,74 +129,6 @@ export function Titlebar() {
       </div>
 
       <div className="flex items-center gap-1">
-        <Select
-          onValueChange={(v) => {
-            if (typeof v === "string") {
-              setSelectedModel(v);
-            }
-          }}
-          value={model.id}
-        >
-          <SelectTrigger
-            className="h-7 min-w-0 border-0 bg-transparent px-2 text-xs hover:bg-(--bg-elevated)"
-            size="sm"
-          >
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {MOCK_MODELS.map((m) => (
-              <SelectItem key={m.id} value={m.id}>
-                {m.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                className={cn(
-                  "text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
-                  sidebarLeftVisible && "text-accent"
-                )}
-                onClick={toggleSidebarLeft}
-                size="icon-sm"
-                variant="ghost"
-              >
-                <ChatCircleIcon className="size-3.5" />
-              </Button>
-            }
-          />
-          <TooltipContent
-            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
-            side="bottom"
-          >
-            Toggle chats (Ctrl+L)
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                className={cn(
-                  "text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
-                  sidebarRightVisible && "text-accent"
-                )}
-                onClick={toggleSidebarRight}
-                size="icon-sm"
-                variant="ghost"
-              >
-                <FolderIcon className="size-3.5" />
-              </Button>
-            }
-          />
-          <TooltipContent
-            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
-            side="bottom"
-          >
-            Toggle files (Ctrl+B)
-          </TooltipContent>
-        </Tooltip>
         <Tooltip>
           <TooltipTrigger
             render={
@@ -204,7 +137,7 @@ export function Titlebar() {
                   render={
                     <Button
                       className={cn(
-                        "gap-0.5 text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
+                        "text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
                         terminalVisible && "text-accent"
                       )}
                       size="icon-sm"
@@ -212,8 +145,7 @@ export function Titlebar() {
                     />
                   }
                 >
-                  <TerminalLayoutIcon mode={terminalLayoutMode} />
-                  <CaretDownIcon className="size-2.5 opacity-70" />
+                  <TerminalLayoutIcon className="size-4" mode={terminalLayoutMode} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
@@ -232,7 +164,7 @@ export function Titlebar() {
                   >
                     {TERMINAL_LAYOUT_OPTIONS.map(({ mode, label }) => (
                       <DropdownMenuRadioItem key={mode} value={mode}>
-                        <TerminalLayoutIcon className="mr-2" mode={mode} />
+                        <TerminalLayoutIcon className="mr-2 size-4" mode={mode} />
                         {label}
                       </DropdownMenuRadioItem>
                     ))}
@@ -257,12 +189,58 @@ export function Titlebar() {
           <TooltipTrigger
             render={
               <Button
-                className="text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
-                onClick={() => setSettingsOpen(true)}
-                size="icon-sm"
+                className={cn(
+                  "text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
+                  sidebarLeftVisible && "text-accent"
+                )}
+                onClick={toggleSidebarLeft}
+                size="icon"
                 variant="ghost"
               >
-                <GearIcon className="size-3.5" />
+                <SidebarIcon className="size-5" weight="fill" />
+              </Button>
+            }
+          />
+          <TooltipContent
+            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
+            side="bottom"
+          >
+            Toggle chats (Ctrl+L)
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                className={cn(
+                  "text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)",
+                  sidebarRightVisible && "text-accent"
+                )}
+                onClick={toggleSidebarRight}
+                size="icon"
+                variant="ghost"
+              >
+                <SidebarIcon className="size-5 rotate-180" weight="fill" />
+              </Button>
+            }
+          />
+          <TooltipContent
+            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
+            side="bottom"
+          >
+            Toggle files (Ctrl+B)
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                className="text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
+                onClick={() => setSettingsOpen(true)}
+                size="icon"
+                variant="ghost"
+              >
+                <GearSixIcon className="size-5" weight="bold" />
               </Button>
             }
           />
