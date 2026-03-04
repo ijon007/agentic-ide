@@ -1,6 +1,6 @@
 "use client";
 
-import { XIcon } from "@phosphor-icons/react";
+import { FileCodeIcon, XIcon } from "@phosphor-icons/react";
 import dynamic from "next/dynamic";
 import { useApp } from "@/context/app-context";
 import { cn } from "@/lib/utils";
@@ -42,19 +42,22 @@ function hello() {
 
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col overflow-hidden"
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+      data-panel="editor"
       style={{ backgroundColor: "var(--bg-base)" }}
     >
       {openFiles.length > 0 ? (
         <>
           <div
-            className="flex h-9 shrink-0 items-stretch"
+            className="flex h-9 min-w-0 shrink-0"
             style={{ backgroundColor: "var(--bg-surface)" }}
           >
+            <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden scrollbar-hidden">
+              <div className="flex h-full shrink-0 items-stretch">
             {openFiles.map((path) => (
               <div
                 className={cn(
-                  "group flex cursor-pointer items-center gap-2 border-r px-3 py-1.5 font-mono text-xs transition-colors",
+                  "group flex shrink-0 cursor-pointer items-center gap-2 border-r px-3 py-1.5 font-mono text-xs transition-colors",
                   activeFile !== path && "border-b"
                 )}
                 key={path}
@@ -77,22 +80,25 @@ function hello() {
                 }}
                 tabIndex={0}
               >
+                <FileCodeIcon className="size-3 shrink-0" />
                 <span className="max-w-[120px] truncate">
                   {path.split("/").pop()}
                 </span>
                 <button
-                  className="opacity-0 hover:opacity-100 group-hover:opacity-70"
+                  className={cn(
+                    "cursor-pointer",
+                    activeFile === path ? "opacity-70" : "opacity-0 group-hover:opacity-70"
+                  )}
                   onClick={(e) => handleCloseFile(e, path)}
+                  title="Close file (Ctrl+W)"
                   type="button"
                 >
                   <XIcon className="size-3" />
                 </button>
               </div>
             ))}
-            <div
-              className="min-w-0 flex-1 border-b"
-              style={{ borderColor: "var(--border-subtle)" }}
-            />
+              </div>
+            </div>
           </div>
           <div className="relative flex min-h-0 flex-1">
             <div className="min-h-0 min-w-0 flex-1 overflow-hidden">

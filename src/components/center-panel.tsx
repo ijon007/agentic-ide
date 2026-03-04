@@ -32,7 +32,7 @@ export function CenterPanel() {
 
   if (hasChats && !hasFiles) {
     return (
-      <main className="flex h-full flex-col">
+      <main className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
         <ChatView />
       </main>
     );
@@ -40,21 +40,21 @@ export function CenterPanel() {
 
   if (!hasChats && hasFiles) {
     return (
-      <main className="flex h-full flex-col">
+      <main className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
         <EditorView />
       </main>
     );
   }
 
   return (
-    <main className="flex h-full min-h-0 min-w-0 flex-col">
+    <main className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
       <ResizablePanelGroup
         className="h-full min-h-0 w-full"
         id="forge-center-panels"
         orientation="horizontal"
       >
-        <ResizablePanel className="min-w-0" defaultSize={50} minSize={15}>
-          <div className="flex h-full min-h-0 flex-col">
+        <ResizablePanel className="min-w-0 overflow-hidden" defaultSize={50} minSize={15}>
+          <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
             <ChatView />
           </div>
         </ResizablePanel>
@@ -63,8 +63,8 @@ export function CenterPanel() {
           style={{ backgroundColor: "var(--border-default)" }}
           withHandle={false}
         />
-        <ResizablePanel className="min-w-0" defaultSize={50} minSize={15}>
-          <div className="flex h-full min-h-0 flex-col">
+        <ResizablePanel className="min-w-0 overflow-hidden" defaultSize={50} minSize={15}>
+          <div className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
             <EditorView />
           </div>
         </ResizablePanel>

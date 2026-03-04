@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  ChatCircleIcon,
   CheckCircleIcon,
   CheckIcon,
   CopyIcon,
@@ -273,56 +274,61 @@ export function ChatView() {
 
   return (
     <div
-      className="flex flex-1 flex-col"
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+      data-panel="chat"
       style={{ backgroundColor: "var(--bg-base)" }}
     >
       {openChats.length > 0 && (
         <div
-          className="flex h-9 shrink-0 items-stretch"
+          className="flex h-9 min-w-0 shrink-0"
           style={{ backgroundColor: "var(--bg-surface)" }}
         >
-          {openChats.map((id) => {
-            const isActive = activeChat === id;
-            return (
-              <div
+          <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden scrollbar-hidden">
+            <div className="flex h-full shrink-0 items-stretch">
+              {openChats.map((id) => {
+                const isActive = activeChat === id;
+                return (
+                  <div
                 className={cn(
-                  "group flex cursor-pointer items-center gap-2 border-r px-3 py-1.5 text-xs transition-colors",
+                  "group flex shrink-0 cursor-pointer items-center gap-2 border-r px-3 py-1.5 text-xs transition-colors",
                   !isActive && "border-b"
                 )}
-                key={id}
-                onClick={() => setActiveChat(id)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setActiveChat(id);
-                  }
-                }}
-                role="tab"
-                style={{
-                  borderColor: "var(--border-subtle)",
-                  color: isActive ? "var(--text-primary)" : "var(--text-muted)",
-                  backgroundColor: isActive ? "var(--bg-base)" : "transparent",
-                }}
-                tabIndex={0}
-              >
-                <span className="max-w-[140px] truncate">
-                  {getChatTitle(id)}
-                </span>
-                <button
-                  className="opacity-0 hover:opacity-100 group-hover:opacity-70"
-                  onClick={(e) => handleCloseChat(e, id)}
-                  title="Close chat (Ctrl+Shift+L)"
-                  type="button"
-                >
-                  <XIcon className="size-3" />
-                </button>
-              </div>
-            );
-          })}
-          <div
-            className="min-w-0 flex-1 border-b"
-            style={{ borderColor: "var(--border-subtle)" }}
-          />
+                    key={id}
+                    onClick={() => setActiveChat(id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setActiveChat(id);
+                      }
+                    }}
+                    role="tab"
+                    style={{
+                      borderColor: "var(--border-subtle)",
+                      color: isActive ? "var(--text-primary)" : "var(--text-muted)",
+                      backgroundColor: isActive ? "var(--bg-base)" : "transparent",
+                    }}
+                    tabIndex={0}
+                  >
+                    <ChatCircleIcon className="size-3 shrink-0" />
+                    <span className="max-w-[140px] truncate">
+                      {getChatTitle(id)}
+                    </span>
+                    <button
+                      className={cn(
+                        "cursor-pointer",
+                        isActive ? "opacity-70" : "opacity-0 group-hover:opacity-70"
+                      )}
+                      onClick={(e) => handleCloseChat(e, id)}
+                      title="Close chat (Ctrl+W)"
+                      type="button"
+                    >
+                      <XIcon className="size-3" />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       )}
       <ScrollArea className="flex-1">

@@ -100,7 +100,7 @@ export function SidebarLeft() {
                       <div className="ml-4 flex flex-col" key={chat.id}>
                         <button
                           className={cn(
-                            "group flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors",
+                            "group flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors duration-200 cursor-pointer",
                             isActive &&
                               "border-(--selection-border) border-l-2 bg-(--selection-bg)"
                           )}
