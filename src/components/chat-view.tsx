@@ -287,7 +287,7 @@ export function ChatView() {
               <div
                 className={cn(
                   "group flex cursor-pointer items-center gap-2 border-r px-3 py-1.5 text-xs transition-colors",
-                  isActive && "border-(--accent) border-b-2"
+                  isActive && "border-accent border-b-2"
                 )}
                 key={id}
                 onClick={() => setActiveChat(id)}
@@ -336,7 +336,7 @@ export function ChatView() {
                 className={cn(
                   "max-w-[80%] rounded-lg px-4 py-2.5 text-[13px] leading-normal",
                   msg.role === "user" &&
-                    "border border-(--border-subtle) border-l-(--accent) border-l-2 bg-(--bg-elevated)"
+                    "border border-(--border-subtle) border-l-accent border-l-2 bg-(--bg-elevated)"
                 )}
                 style={{ color: "var(--text-primary)" }}
               >

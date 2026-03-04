@@ -68,7 +68,7 @@ function MainContentLayout() {
     toggleSidebarRight,
   } = useApp();
 
-  const { closeChat, activeChat } = useApp();
+  const { closeChat, activeChat, openChat, openChats } = useApp();
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -84,6 +84,8 @@ function MainContentLayout() {
         e.preventDefault();
         if (activeChat) {
           closeChat(activeChat);
+        } else if (openChats.length === 0) {
+          openChat(`new-${Date.now()}`);
         }
       }
       if (
@@ -107,6 +109,8 @@ function MainContentLayout() {
     toggleSidebarRight,
     closeChat,
     activeChat,
+    openChat,
+    openChats,
   ]);
 
   const showTerminal = terminalVisible;
