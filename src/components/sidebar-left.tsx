@@ -70,7 +70,7 @@ export function SidebarLeft() {
             return (
               <div className="flex flex-col" key={project.id}>
                 <button
-                  className="flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors hover:bg-[var(--bg-elevated)]"
+                  className="flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors hover:bg-(--bg-elevated)"
                   onClick={() => {
                     toggleProject(project.id);
                     setActiveProject(project.id);
@@ -102,7 +102,7 @@ export function SidebarLeft() {
                           className={cn(
                             "group flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors",
                             isActive &&
-                              "border-[var(--selection-border)] border-l-2 bg-[var(--selection-bg)]"
+                              "border-(--selection-border) border-l-2 bg-(--selection-bg)"
                           )}
                           onClick={() => handleSelectChat(chat.id)}
                           style={{

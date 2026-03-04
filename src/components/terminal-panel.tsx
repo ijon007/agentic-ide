@@ -22,14 +22,14 @@ export function TerminalPanel() {
       >
         <div className="flex items-center gap-1">
           <button
-            className="rounded px-2 py-1 font-mono text-[11px] transition-colors hover:bg-[var(--bg-elevated)]"
+            className="rounded px-2 py-1 font-mono text-[11px] transition-colors hover:bg-(--bg-elevated)"
             style={{ color: "var(--text-secondary)" }}
             type="button"
           >
             terminal
           </button>
           <Button
-            className="h-5 gap-1 px-2 text-[10px] text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)]"
+            className="h-5 gap-1 px-2 text-(--text-muted) text-[10px] hover:bg-(--bg-elevated) hover:text-(--text-secondary)"
             size="xs"
             variant="ghost"
           >

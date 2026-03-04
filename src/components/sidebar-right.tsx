@@ -53,8 +53,8 @@ function FileTreeItem({
     <div className="flex flex-col">
       <button
         className={cn(
-          "flex items-center gap-2 rounded px-2 py-1 text-left transition-colors hover:bg-[var(--bg-elevated)]",
-          isActive && "bg-[var(--selection-bg)]"
+          "flex items-center gap-2 rounded px-2 py-1 text-left transition-colors hover:bg-(--bg-elevated)",
+          isActive && "bg-(--selection-bg)"
         )}
         onClick={handleClick}
         style={{
@@ -151,7 +151,7 @@ export function SidebarRight() {
           {project?.name ?? "No project"}
         </span>
         <Button
-          className="text-[var(--text-muted)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-secondary)]"
+          className="text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)"
           size="icon-xs"
           variant="ghost"
         >

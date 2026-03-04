@@ -278,8 +278,8 @@ export function ChatView() {
     >
       {openChats.length > 0 && (
         <div
-          className="flex h-9 shrink-0 items-center border-b"
-          style={{ borderColor: "var(--border-subtle)" }}
+          className="flex h-9 shrink-0 items-stretch"
+          style={{ backgroundColor: "var(--bg-surface)" }}
         >
           {openChats.map((id) => {
             const isActive = activeChat === id;
@@ -287,7 +287,7 @@ export function ChatView() {
               <div
                 className={cn(
                   "group flex cursor-pointer items-center gap-2 border-r px-3 py-1.5 text-xs transition-colors",
-                  isActive && "border-accent border-b-2"
+                  !isActive && "border-b"
                 )}
                 key={id}
                 onClick={() => setActiveChat(id)}
@@ -300,7 +300,6 @@ export function ChatView() {
                 role="tab"
                 style={{
                   borderColor: "var(--border-subtle)",
-                  borderBottomColor: isActive ? "var(--accent)" : "transparent",
                   color: isActive ? "var(--text-primary)" : "var(--text-muted)",
                   backgroundColor: isActive ? "var(--bg-base)" : "transparent",
                 }}
@@ -320,6 +319,10 @@ export function ChatView() {
               </div>
             );
           })}
+          <div
+            className="min-w-0 flex-1 border-b"
+            style={{ borderColor: "var(--border-subtle)" }}
+          />
         </div>
       )}
       <ScrollArea className="flex-1">
