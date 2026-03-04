@@ -1,36 +1,33 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { useApp } from "@/context/app-context";
-import { MOCK_PROJECTS } from "@/constants/projects";
-import { MOCK_CHATS } from "@/constants/chats";
-import { formatTimestamp, truncate } from "@/utils/format";
 import {
-  FolderIcon,
   CaretRightIcon,
   ChatCircleIcon,
+  FolderIcon,
   PlusIcon,
-  UserIcon,
 } from "@phosphor-icons/react";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { MOCK_CHATS } from "@/constants/chats";
+import { MOCK_PROJECTS } from "@/constants/projects";
+import { useApp } from "@/context/app-context";
+import { cn } from "@/lib/utils";
+import { formatTimestamp, truncate } from "@/utils/format";
 
 export function SidebarLeft() {
-  const {
-    activeProject,
-    activeChat,
-    setActiveProject,
-    openChat,
-  } = useApp();
+  const { activeProject, activeChat, setActiveProject, openChat } = useApp();
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(
     new Set([activeProject ?? "1"])
   );
   const toggleProject = (id: string) => {
     setExpandedProjects((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -54,15 +51,15 @@ export function SidebarLeft() {
       <div className="flex flex-col gap-2 p-3">
         <Button
           className="w-full justify-center"
-          variant="ghost"
           onClick={handleNewChat}
+          variant="ghost"
         >
           <PlusIcon className="size-4" />
           New Chat
         </Button>
       </div>
 
-      <ScrollArea className="flex-1 scrollbar-hidden" hideScrollbar>
+      <ScrollArea className="scrollbar-hidden flex-1" hideScrollbar>
         <div className="flex flex-col gap-0.5 px-2 pb-4">
           {MOCK_PROJECTS.map((project) => {
             const isExpanded = expandedProjects.has(project.id);
@@ -71,19 +68,19 @@ export function SidebarLeft() {
             );
 
             return (
-              <div key={project.id} className="flex flex-col">
+              <div className="flex flex-col" key={project.id}>
                 <button
-                  type="button"
                   className="flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors hover:bg-[var(--bg-elevated)]"
-                  style={{ color: "var(--text-primary)" }}
                   onClick={() => {
                     toggleProject(project.id);
                     setActiveProject(project.id);
                   }}
+                  style={{ color: "var(--text-primary)" }}
+                  type="button"
                 >
-                    <CaretRightIcon
-                      className={cn(
-                        "size-4 shrink-0 transition-transform",
+                  <CaretRightIcon
+                    className={cn(
+                      "size-4 shrink-0 transition-transform",
                       isExpanded && "rotate-90"
                     )}
                     style={{ color: "var(--text-secondary)" }}
@@ -100,14 +97,14 @@ export function SidebarLeft() {
                     const isActive = activeChat === chat.id;
 
                     return (
-                      <div key={chat.id} className="ml-4 flex flex-col">
+                      <div className="ml-4 flex flex-col" key={chat.id}>
                         <button
-                          type="button"
                           className={cn(
                             "group flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors",
                             isActive &&
-                              "border-l-2 border-[var(--selection-border)] bg-[var(--selection-bg)]"
+                              "border-[var(--selection-border)] border-l-2 bg-[var(--selection-bg)]"
                           )}
+                          onClick={() => handleSelectChat(chat.id)}
                           style={{
                             color: isActive
                               ? "var(--text-primary)"
@@ -116,7 +113,7 @@ export function SidebarLeft() {
                               ? "var(--selection-border)"
                               : "transparent",
                           }}
-                          onClick={() => handleSelectChat(chat.id)}
+                          type="button"
                         >
                           <ChatCircleIcon
                             className="size-4 shrink-0"
@@ -126,7 +123,7 @@ export function SidebarLeft() {
                             {truncate(chat.title, 28)}
                           </span>
                           <span
-                            className="hidden text-xs font-mono group-hover:inline"
+                            className="hidden font-mono text-xs group-hover:inline"
                             style={{ color: "var(--text-muted)" }}
                           >
                             {formatTimestamp(chat.timestamp)}

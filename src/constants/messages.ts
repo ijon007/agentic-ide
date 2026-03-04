@@ -4,22 +4,35 @@ export const MOCK_MESSAGES: ChatMessage[] = [
   {
     id: "m1",
     role: "user",
-    content: "Can you add a loading spinner to the login button and fix the validation for empty email?",
+    content:
+      "Can you add a loading spinner to the login button and fix the validation for empty email?",
   },
   {
     id: "m2",
     role: "assistant",
-    content: "I'll add a loading state to the login button and fix the email validation. Let me look at the current implementation first.",
+    content:
+      "I'll add a loading state to the login button and fix the email validation. Let me look at the current implementation first.",
     toolCalls: [
-      { id: "t1", verb: "reading", path: "src/components/LoginForm.tsx", status: "reading" },
-      { id: "t2", verb: "wrote", path: "src/components/LoginForm.tsx", status: "wrote" },
+      {
+        id: "t1",
+        verb: "reading",
+        path: "src/components/LoginForm.tsx",
+        status: "reading",
+      },
+      {
+        id: "t2",
+        verb: "wrote",
+        path: "src/components/LoginForm.tsx",
+        status: "wrote",
+      },
       { id: "t3", verb: "running", text: "npm run lint...", status: "running" },
     ],
   },
   {
     id: "m3",
     role: "assistant",
-    content: "I've made the changes. Here's what I did:\n\n1. **Loading spinner** — Added a `isLoading` state that shows a spinner when the form is submitting.\n2. **Email validation** — Added a check for empty strings and trimmed whitespace.\n\nHere's the updated validation logic:",
+    content:
+      "I've made the changes. Here's what I did:\n\n1. **Loading spinner** — Added a `isLoading` state that shows a spinner when the form is submitting.\n2. **Email validation** — Added a check for empty strings and trimmed whitespace.\n\nHere's the updated validation logic:",
     codeBlocks: [
       {
         language: "typescript",
@@ -34,7 +47,8 @@ export const MOCK_MESSAGES: ChatMessage[] = [
   {
     id: "m4",
     role: "assistant",
-    content: "I've also updated the LoginForm component. Here's the diff for the changes:",
+    content:
+      "I've also updated the LoginForm component. Here's the diff for the changes:",
     diff: {
       id: "d1",
       filePath: "src/components/LoginForm.tsx",

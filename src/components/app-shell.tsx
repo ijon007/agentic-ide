@@ -1,48 +1,37 @@
 "use client";
 
 import { useEffect } from "react";
-import { AppProvider, useApp } from "@/context/app-context";
-import type { TerminalLayoutMode } from "@/context/app-context";
-import { Titlebar } from "@/components/titlebar";
+import { CenterPanel } from "@/components/center-panel";
+import { SettingsPanel } from "@/components/settings-panel";
 import { SidebarLeft } from "@/components/sidebar-left";
 import { SidebarRight } from "@/components/sidebar-right";
-import { CenterPanel } from "@/components/center-panel";
 import { TerminalPanel } from "@/components/terminal-panel";
-import { SettingsPanel } from "@/components/settings-panel";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
+import { Titlebar } from "@/components/titlebar";
+import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import type { TerminalLayoutMode } from "@/context/app-context";
+import { AppProvider, useApp } from "@/context/app-context";
 
 function SidebarsAndCenter() {
   const { sidebarLeftVisible, sidebarRightVisible } = useApp();
   return (
     <ResizablePanelGroup
-      key={`sidebars-${sidebarLeftVisible}-${sidebarRightVisible}`}
-      orientation="horizontal"
       className="h-full"
       id="forge-sidebars"
+      key={`sidebars-${sidebarLeftVisible}-${sidebarRightVisible}`}
+      orientation="horizontal"
     >
       {sidebarLeftVisible && (
         <ResizablePanel
-          defaultSize="12"
-          minSize="8"
-          maxSize="35"
           className="min-w-[100px]"
+          defaultSize="12"
+          maxSize="35"
+          minSize="8"
         >
           <SidebarLeft />
         </ResizablePanel>
       )}
       <ResizablePanel
+        className="min-w-0"
         defaultSize={
           sidebarLeftVisible && sidebarRightVisible
             ? "72"
@@ -51,16 +40,15 @@ function SidebarsAndCenter() {
               : "100"
         }
         minSize="25"
-        className="min-w-0"
       >
         <CenterPanel />
       </ResizablePanel>
       {sidebarRightVisible && (
         <ResizablePanel
-          defaultSize="12"
-          minSize="8"
-          maxSize="35"
           className="min-w-[100px]"
+          defaultSize="12"
+          maxSize="35"
+          minSize="8"
         >
           <SidebarRight />
         </ResizablePanel>
@@ -88,11 +76,21 @@ function MainContentLayout() {
         e.preventDefault();
         toggleTerminal();
       }
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === "l") {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === "l"
+      ) {
         e.preventDefault();
-        if (activeChat) closeChat(activeChat);
+        if (activeChat) {
+          closeChat(activeChat);
+        }
       }
-      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key.toLowerCase() === "l") {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        !e.shiftKey &&
+        e.key.toLowerCase() === "l"
+      ) {
         e.preventDefault();
         toggleSidebarLeft();
       }
@@ -103,7 +101,13 @@ function MainContentLayout() {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleTerminal, toggleSidebarLeft, toggleSidebarRight, closeChat, activeChat]);
+  }, [
+    toggleTerminal,
+    toggleSidebarLeft,
+    toggleSidebarRight,
+    closeChat,
+    activeChat,
+  ]);
 
   const showTerminal = terminalVisible;
   const mode: TerminalLayoutMode = terminalLayoutMode;
@@ -111,9 +115,9 @@ function MainContentLayout() {
   if (!showTerminal) {
     return (
       <ResizablePanelGroup
-        orientation="horizontal"
-        className="flex flex-1 min-h-0"
+        className="flex min-h-0 flex-1"
         id="forge-main-horizontal"
+        orientation="horizontal"
       >
         <ResizablePanel defaultSize="100" minSize="0">
           <SidebarsAndCenter />
@@ -125,15 +129,15 @@ function MainContentLayout() {
   if (mode === "full") {
     return (
       <ResizablePanelGroup
+        className="flex min-h-0 flex-1"
+        id="forge-main-vertical"
         key="full"
         orientation="vertical"
-        className="flex flex-1 min-h-0"
-        id="forge-main-vertical"
       >
         <ResizablePanel defaultSize="70" minSize="0">
           <SidebarsAndCenter />
         </ResizablePanel>
-        <ResizablePanel defaultSize="30" minSize="10" maxSize="100">
+        <ResizablePanel defaultSize="30" maxSize="100" minSize="10">
           <TerminalPanel />
         </ResizablePanel>
       </ResizablePanelGroup>
@@ -143,32 +147,42 @@ function MainContentLayout() {
   if (mode === "center") {
     return (
       <ResizablePanelGroup
+        className="flex min-h-0 flex-1"
+        id="forge-main-center-mode"
         key="center"
         orientation="horizontal"
-        className="flex flex-1 min-h-0"
-        id="forge-main-center-mode"
       >
         {sidebarLeftVisible && (
-          <ResizablePanel defaultSize="12" minSize="8" maxSize="35" className="min-w-[100px]">
+          <ResizablePanel
+            className="min-w-[100px]"
+            defaultSize="12"
+            maxSize="35"
+            minSize="8"
+          >
             <SidebarLeft />
           </ResizablePanel>
         )}
         <ResizablePanel
+          className="min-w-0"
           defaultSize={sidebarLeftVisible && sidebarRightVisible ? "76" : "88"}
           minSize="25"
-          className="min-w-0"
         >
-          <ResizablePanelGroup orientation="vertical" className="h-full">
+          <ResizablePanelGroup className="h-full" orientation="vertical">
             <ResizablePanel defaultSize="70" minSize="5">
               <CenterPanel />
             </ResizablePanel>
-            <ResizablePanel defaultSize="30" minSize="10" maxSize="95">
+            <ResizablePanel defaultSize="30" maxSize="95" minSize="10">
               <TerminalPanel />
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>
         {sidebarRightVisible && (
-          <ResizablePanel defaultSize="12" minSize="8" maxSize="35" className="min-w-[100px]">
+          <ResizablePanel
+            className="min-w-[100px]"
+            defaultSize="12"
+            maxSize="35"
+            minSize="8"
+          >
             <SidebarRight />
           </ResizablePanel>
         )}
@@ -179,39 +193,49 @@ function MainContentLayout() {
   if (mode === "center-right") {
     return (
       <ResizablePanelGroup
+        className="flex min-h-0 flex-1"
+        id="forge-main-center-right-mode"
         key="center-right"
         orientation="horizontal"
-        className="flex flex-1 min-h-0"
-        id="forge-main-center-right-mode"
       >
         {sidebarLeftVisible && (
-          <ResizablePanel defaultSize="12" minSize="8" maxSize="35" className="min-w-[100px]">
+          <ResizablePanel
+            className="min-w-[100px]"
+            defaultSize="12"
+            maxSize="35"
+            minSize="8"
+          >
             <SidebarLeft />
           </ResizablePanel>
         )}
         <ResizablePanel
+          className="min-w-0"
           defaultSize={sidebarLeftVisible ? "88" : "100"}
           minSize="25"
-          className="min-w-0"
         >
-          <ResizablePanelGroup orientation="vertical" className="h-full">
+          <ResizablePanelGroup className="h-full" orientation="vertical">
             <ResizablePanel defaultSize="70" minSize="5">
-              <ResizablePanelGroup orientation="horizontal" className="h-full">
+              <ResizablePanelGroup className="h-full" orientation="horizontal">
                 <ResizablePanel
+                  className="min-w-0"
                   defaultSize={sidebarRightVisible ? "72" : "100"}
                   minSize="25"
-                  className="min-w-0"
                 >
                   <CenterPanel />
                 </ResizablePanel>
                 {sidebarRightVisible && (
-                  <ResizablePanel defaultSize="28" minSize="8" maxSize="50" className="min-w-[100px]">
+                  <ResizablePanel
+                    className="min-w-[100px]"
+                    defaultSize="28"
+                    maxSize="50"
+                    minSize="8"
+                  >
                     <SidebarRight />
                   </ResizablePanel>
                 )}
               </ResizablePanelGroup>
             </ResizablePanel>
-            <ResizablePanel defaultSize="30" minSize="10" maxSize="95">
+            <ResizablePanel defaultSize="30" maxSize="95" minSize="10">
               <TerminalPanel />
             </ResizablePanel>
           </ResizablePanelGroup>
@@ -223,40 +247,50 @@ function MainContentLayout() {
   if (mode === "center-left") {
     return (
       <ResizablePanelGroup
+        className="flex min-h-0 flex-1"
+        id="forge-main-center-left-mode"
         key="center-left"
         orientation="horizontal"
-        className="flex flex-1 min-h-0"
-        id="forge-main-center-left-mode"
       >
         <ResizablePanel
+          className="min-w-0"
           defaultSize={sidebarRightVisible ? "88" : "100"}
           minSize="25"
-          className="min-w-0"
         >
-          <ResizablePanelGroup orientation="vertical" className="h-full">
+          <ResizablePanelGroup className="h-full" orientation="vertical">
             <ResizablePanel defaultSize="70" minSize="5">
-              <ResizablePanelGroup orientation="horizontal" className="h-full">
+              <ResizablePanelGroup className="h-full" orientation="horizontal">
                 {sidebarLeftVisible && (
-                  <ResizablePanel defaultSize="28" minSize="8" maxSize="50" className="min-w-[100px]">
+                  <ResizablePanel
+                    className="min-w-[100px]"
+                    defaultSize="28"
+                    maxSize="50"
+                    minSize="8"
+                  >
                     <SidebarLeft />
                   </ResizablePanel>
                 )}
                 <ResizablePanel
+                  className="min-w-0"
                   defaultSize={sidebarLeftVisible ? "72" : "100"}
                   minSize="25"
-                  className="min-w-0"
                 >
                   <CenterPanel />
                 </ResizablePanel>
               </ResizablePanelGroup>
             </ResizablePanel>
-            <ResizablePanel defaultSize="30" minSize="10" maxSize="95">
+            <ResizablePanel defaultSize="30" maxSize="95" minSize="10">
               <TerminalPanel />
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>
         {sidebarRightVisible && (
-          <ResizablePanel defaultSize="12" minSize="8" maxSize="35" className="min-w-[100px]">
+          <ResizablePanel
+            className="min-w-[100px]"
+            defaultSize="12"
+            maxSize="35"
+            minSize="8"
+          >
             <SidebarRight />
           </ResizablePanel>
         )}
@@ -269,24 +303,11 @@ function MainContentLayout() {
 
 function AppShellInner() {
   return (
-    <ContextMenu>
-      <ContextMenuTrigger className="flex h-screen w-screen min-w-[900px] min-h-[600px] flex-col overflow-hidden">
-        <Titlebar />
-        <MainContentLayout />
-        <SettingsPanel />
-      </ContextMenuTrigger>
-      <ContextMenuContent className="w-48">
-        <ContextMenuItem onClick={() => window.history.back()}>
-          Back
-          <ContextMenuShortcut>Alt+←</ContextMenuShortcut>
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem onClick={() => window.location.reload()}>
-          Refresh
-          <ContextMenuShortcut>Ctrl+R</ContextMenuShortcut>
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
+    <div className="flex h-screen w-screen flex-col overflow-hidden">
+      <Titlebar />
+      <MainContentLayout />
+      <SettingsPanel />
+    </div>
   );
 }
 

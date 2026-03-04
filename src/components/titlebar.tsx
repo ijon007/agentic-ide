@@ -1,18 +1,13 @@
 "use client";
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  CaretDownIcon,
+  ChatCircleIcon,
+  FolderIcon,
+  GearIcon,
+} from "@phosphor-icons/react";
+import { TerminalLayoutIcon } from "@/components/terminal-layout-icons";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,12 +18,22 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useApp } from "@/context/app-context";
-import type { TerminalLayoutMode } from "@/context/app-context";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { MOCK_MODELS } from "@/constants/models";
 import { MOCK_PROJECTS } from "@/constants/projects";
-import { TerminalLayoutIcon } from "@/components/terminal-layout-icons";
-import { GearIcon, ChatCircleIcon, FolderIcon, CaretDownIcon } from "@phosphor-icons/react";
+import type { TerminalLayoutMode } from "@/context/app-context";
+import { useApp } from "@/context/app-context";
 import { cn } from "@/lib/utils";
 
 const TERMINAL_LAYOUT_OPTIONS: { mode: TerminalLayoutMode; label: string }[] = [
@@ -56,16 +61,17 @@ export function Titlebar() {
   } = useApp();
 
   const project = MOCK_PROJECTS.find((p) => p.id === activeProject);
-  const model = MOCK_MODELS.find((m) => m.id === selectedModel) ?? MOCK_MODELS[0];
+  const model =
+    MOCK_MODELS.find((m) => m.id === selectedModel) ?? MOCK_MODELS[0];
 
   return (
     <header
       className="flex h-10 shrink-0 items-center justify-between border-b px-3"
+      data-tauri-drag-region
       style={{
         backgroundColor: "var(--bg-surface)",
         borderColor: "var(--border-subtle)",
       }}
-      data-tauri-drag-region
     >
       <div className="flex items-center gap-3">
         <span
@@ -86,8 +92,12 @@ export function Titlebar() {
 
       <div className="flex items-center gap-1">
         <Select
+          onValueChange={(v) => {
+            if (typeof v === "string") {
+              setSelectedModel(v);
+            }
+          }}
           value={model.id}
-          onValueChange={(v) => { if (typeof v === "string") setSelectedModel(v); }}
         >
           <SelectTrigger
             className="h-7 min-w-0 border-0 bg-transparent px-2 text-xs hover:bg-[var(--bg-elevated)]"
@@ -107,21 +117,21 @@ export function Titlebar() {
           <TooltipTrigger
             render={
               <Button
-                variant="ghost"
-                size="icon-sm"
                 className={cn(
                   "text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
                   sidebarLeftVisible && "text-[var(--accent)]"
                 )}
                 onClick={toggleSidebarLeft}
+                size="icon-sm"
+                variant="ghost"
               >
                 <ChatCircleIcon className="size-3.5" />
               </Button>
             }
           />
           <TooltipContent
+            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
             side="bottom"
-            className="text-[11px] bg-[var(--bg-overlay)] border border-[var(--border-subtle)] text-[var(--text-primary)]"
           >
             Toggle chats (Ctrl+L)
           </TooltipContent>
@@ -130,21 +140,21 @@ export function Titlebar() {
           <TooltipTrigger
             render={
               <Button
-                variant="ghost"
-                size="icon-sm"
                 className={cn(
                   "text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
                   sidebarRightVisible && "text-[var(--accent)]"
                 )}
                 onClick={toggleSidebarRight}
+                size="icon-sm"
+                variant="ghost"
               >
                 <FolderIcon className="size-3.5" />
               </Button>
             }
           />
           <TooltipContent
+            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
             side="bottom"
-            className="text-[11px] bg-[var(--bg-overlay)] border border-[var(--border-subtle)] text-[var(--text-primary)]"
           >
             Toggle files (Ctrl+B)
           </TooltipContent>
@@ -156,12 +166,12 @@ export function Titlebar() {
                 <DropdownMenuTrigger
                   render={
                     <Button
-                      variant="ghost"
-                      size="icon-sm"
                       className={cn(
-                        "text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] gap-0.5",
+                        "gap-0.5 text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]",
                         terminalVisible && "text-[var(--accent)]"
                       )}
+                      size="icon-sm"
+                      variant="ghost"
                     />
                   }
                 >
@@ -170,20 +180,22 @@ export function Titlebar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="min-w-[220px] bg-[var(--bg-overlay)] border-[var(--border-subtle)]"
+                  className="min-w-[220px] border-[var(--border-subtle)] bg-[var(--bg-overlay)]"
                 >
                   <DropdownMenuRadioGroup
-                    value={terminalLayoutMode}
                     onValueChange={(v) => {
                       if (v) {
                         setTerminalLayoutMode(v as TerminalLayoutMode);
-                        if (!terminalVisible) toggleTerminal();
+                        if (!terminalVisible) {
+                          toggleTerminal();
+                        }
                       }
                     }}
+                    value={terminalLayoutMode}
                   >
                     {TERMINAL_LAYOUT_OPTIONS.map(({ mode, label }) => (
                       <DropdownMenuRadioItem key={mode} value={mode}>
-                        <TerminalLayoutIcon mode={mode} className="mr-2" />
+                        <TerminalLayoutIcon className="mr-2" mode={mode} />
                         {label}
                       </DropdownMenuRadioItem>
                     ))}
@@ -198,8 +210,8 @@ export function Titlebar() {
             }
           />
           <TooltipContent
+            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
             side="bottom"
-            className="text-[11px] bg-[var(--bg-overlay)] border border-[var(--border-subtle)] text-[var(--text-primary)]"
           >
             Terminal layout (Ctrl+`)
           </TooltipContent>
@@ -208,18 +220,18 @@ export function Titlebar() {
           <TooltipTrigger
             render={
               <Button
-                variant="ghost"
-                size="icon-sm"
                 className="text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
                 onClick={() => setSettingsOpen(true)}
+                size="icon-sm"
+                variant="ghost"
               >
                 <GearIcon className="size-3.5" />
               </Button>
             }
           />
           <TooltipContent
+            className="border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[11px] text-[var(--text-primary)]"
             side="bottom"
-            className="text-[11px] bg-[var(--bg-overlay)] border border-[var(--border-subtle)] text-[var(--text-primary)]"
           >
             Settings
           </TooltipContent>

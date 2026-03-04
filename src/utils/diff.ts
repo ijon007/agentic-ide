@@ -1,7 +1,7 @@
 export interface ParsedDiffLine {
-  type: "add" | "remove" | "context";
   content: string;
   lineNumber?: number;
+  type: "add" | "remove" | "context";
 }
 
 export function parseUnifiedDiff(raw: string): ParsedDiffLine[] {

@@ -9,14 +9,30 @@ const r = 2;
 function IconFull({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 16 16"
+      className={cn(iconClass, className)}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.25"
-      className={cn(iconClass, className)}
+      viewBox="0 0 16 16"
     >
-      <rect x="1" y="1" width="14" height="14" rx={r} fill="none" strokeOpacity="0.4" />
-      <rect x="1" y="8" width="14" height="6" rx={r - 0.5} fill="currentColor" fillOpacity="0.6" />
+      <rect
+        fill="none"
+        height="14"
+        rx={r}
+        strokeOpacity="0.4"
+        width="14"
+        x="1"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.6"
+        height="6"
+        rx={r - 0.5}
+        width="14"
+        x="1"
+        y="8"
+      />
     </svg>
   );
 }
@@ -24,17 +40,57 @@ function IconFull({ className }: { className?: string }) {
 function IconCenter({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 16 16"
+      className={cn(iconClass, className)}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.25"
-      className={cn(iconClass, className)}
+      viewBox="0 0 16 16"
     >
-      <rect x="1" y="1" width="14" height="14" rx={r} fill="none" strokeOpacity="0.4" />
-      <rect x="2" y="1" width="3" height="14" rx={1} fill="currentColor" fillOpacity="0.2" />
-      <rect x="11" y="1" width="3" height="14" rx={1} fill="currentColor" fillOpacity="0.2" />
-      <rect x="5" y="1" width="6" height="6" rx={1} fill="currentColor" fillOpacity="0.2" />
-      <rect x="5" y="8" width="6" height="6" rx={r - 0.5} fill="currentColor" fillOpacity="0.65" />
+      <rect
+        fill="none"
+        height="14"
+        rx={r}
+        strokeOpacity="0.4"
+        width="14"
+        x="1"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.2"
+        height="14"
+        rx={1}
+        width="3"
+        x="2"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.2"
+        height="14"
+        rx={1}
+        width="3"
+        x="11"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.2"
+        height="6"
+        rx={1}
+        width="6"
+        x="5"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.65"
+        height="6"
+        rx={r - 0.5}
+        width="6"
+        x="5"
+        y="8"
+      />
     </svg>
   );
 }
@@ -42,15 +98,39 @@ function IconCenter({ className }: { className?: string }) {
 function IconCenterRight({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 16 16"
+      className={cn(iconClass, className)}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.25"
-      className={cn(iconClass, className)}
+      viewBox="0 0 16 16"
     >
-      <rect x="1" y="1" width="14" height="14" rx={r} fill="none" strokeOpacity="0.4" />
-      <rect x="1" y="1" width="4" height="14" rx={1} fill="currentColor" fillOpacity="0.25" />
-      <rect x="5" y="8" width="10" height="6" rx={r - 0.5} fill="currentColor" fillOpacity="0.6" />
+      <rect
+        fill="none"
+        height="14"
+        rx={r}
+        strokeOpacity="0.4"
+        width="14"
+        x="1"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.25"
+        height="14"
+        rx={1}
+        width="4"
+        x="1"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.6"
+        height="6"
+        rx={r - 0.5}
+        width="10"
+        x="5"
+        y="8"
+      />
     </svg>
   );
 }
@@ -58,20 +138,47 @@ function IconCenterRight({ className }: { className?: string }) {
 function IconCenterLeft({ className }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 16 16"
+      className={cn(iconClass, className)}
       fill="none"
       stroke="currentColor"
       strokeWidth="1.25"
-      className={cn(iconClass, className)}
+      viewBox="0 0 16 16"
     >
-      <rect x="1" y="1" width="14" height="14" rx={r} fill="none" strokeOpacity="0.4" />
-      <rect x="11" y="1" width="4" height="14" rx={1} fill="currentColor" fillOpacity="0.25" />
-      <rect x="1" y="8" width="10" height="6" rx={r - 0.5} fill="currentColor" fillOpacity="0.6" />
+      <rect
+        fill="none"
+        height="14"
+        rx={r}
+        strokeOpacity="0.4"
+        width="14"
+        x="1"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.25"
+        height="14"
+        rx={1}
+        width="4"
+        x="11"
+        y="1"
+      />
+      <rect
+        fill="currentColor"
+        fillOpacity="0.6"
+        height="6"
+        rx={r - 0.5}
+        width="10"
+        x="1"
+        y="8"
+      />
     </svg>
   );
 }
 
-const icons: Record<TerminalLayoutMode, React.ComponentType<{ className?: string }>> = {
+const icons: Record<
+  TerminalLayoutMode,
+  React.ComponentType<{ className?: string }>
+> = {
   full: IconFull,
   center: IconCenter,
   "center-right": IconCenterRight,

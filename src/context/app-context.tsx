@@ -2,45 +2,49 @@
 
 import {
   createContext,
+  type ReactNode,
   useCallback,
   useContext,
   useState,
-  type ReactNode,
 } from "react";
 
-export type TerminalLayoutMode = "full" | "center" | "center-right" | "center-left";
+export type TerminalLayoutMode =
+  | "full"
+  | "center"
+  | "center-right"
+  | "center-left";
 
 interface AppState {
-  activeProject: string | null;
   activeChat: string | null;
-  openChats: string[];
-  selectedModel: string;
-  openFiles: string[];
   activeFile: string | null;
-  terminalVisible: boolean;
-  terminalLayoutMode: TerminalLayoutMode;
+  activeProject: string | null;
+  openChats: string[];
+  openFiles: string[];
+  selectedModel: string;
+  settingsOpen: boolean;
   sidebarLeftVisible: boolean;
   sidebarRightVisible: boolean;
-  settingsOpen: boolean;
+  terminalLayoutMode: TerminalLayoutMode;
+  terminalVisible: boolean;
 }
 
 interface AppContextValue extends AppState {
-  setActiveProject: (id: string | null) => void;
-  setActiveChat: (id: string | null) => void;
-  setOpenChats: (ids: string[]) => void;
-  setSelectedModel: (id: string) => void;
-  setOpenFiles: (paths: string[]) => void;
-  setActiveFile: (path: string | null) => void;
-  setTerminalVisible: (visible: boolean) => void;
-  setTerminalLayoutMode: (mode: TerminalLayoutMode) => void;
-  setSettingsOpen: (open: boolean) => void;
-  openFile: (path: string) => void;
+  closeChat: (id: string) => void;
   closeFile: (path: string) => void;
   openChat: (id: string) => void;
-  closeChat: (id: string) => void;
-  toggleTerminal: () => void;
+  openFile: (path: string) => void;
+  setActiveChat: (id: string | null) => void;
+  setActiveFile: (path: string | null) => void;
+  setActiveProject: (id: string | null) => void;
+  setOpenChats: (ids: string[]) => void;
+  setOpenFiles: (paths: string[]) => void;
+  setSelectedModel: (id: string) => void;
+  setSettingsOpen: (open: boolean) => void;
+  setTerminalLayoutMode: (mode: TerminalLayoutMode) => void;
+  setTerminalVisible: (visible: boolean) => void;
   toggleSidebarLeft: () => void;
   toggleSidebarRight: () => void;
+  toggleTerminal: () => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -115,9 +119,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState((s) => {
       const openFiles = s.openFiles.filter((p) => p !== path);
       const activeFile =
-        s.activeFile === path
-          ? openFiles[openFiles.length - 1] ?? null
-          : s.activeFile;
+        s.activeFile === path ? (openFiles.at(-1) ?? null) : s.activeFile;
       return {
         ...s,
         openFiles,
@@ -143,9 +145,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState((s) => {
       const openChats = s.openChats.filter((c) => c !== id);
       const activeChat =
-        s.activeChat === id
-          ? openChats[openChats.length - 1] ?? null
-          : s.activeChat;
+        s.activeChat === id ? (openChats.at(-1) ?? null) : s.activeChat;
       return {
         ...s,
         openChats,
@@ -186,13 +186,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
     toggleSidebarRight,
   };
 
-  return (
-    <AppContext.Provider value={value}>{children}</AppContext.Provider>
-  );
+  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
 export function useApp() {
   const ctx = useContext(AppContext);
-  if (!ctx) throw new Error("useApp must be used within AppProvider");
+  if (!ctx) {
+    throw new Error("useApp must be used within AppProvider");
+  }
   return ctx;
 }

@@ -9,7 +9,9 @@ export function buildTreeFromPaths(paths: string[]): FileTreeNode[] {
 
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
-      if (!part) continue;
+      if (!part) {
+        continue;
+      }
       currentPath = currentPath ? `${currentPath}/${part}` : part;
       const isFile = i === parts.length - 1;
 
@@ -29,19 +31,27 @@ export function buildTreeFromPaths(paths: string[]): FileTreeNode[] {
     const seen = new Set<string>();
 
     for (const node of nodes) {
-      if (seen.has(node.path)) continue;
+      if (seen.has(node.path)) {
+        continue;
+      }
       seen.add(node.path);
 
       if (node.type === "folder" && node.children) {
         node.children = buildHierarchy(
-          nodes.filter((n) => n.path.startsWith(node.path + "/") && !n.path.slice(node.path.length + 1).includes("/"))
+          nodes.filter(
+            (n) =>
+              n.path.startsWith(`${node.path}/`) &&
+              !n.path.slice(node.path.length + 1).includes("/")
+          )
         );
       }
       result.push(node);
     }
 
     return result.sort((a, b) => {
-      if (a.type !== b.type) return a.type === "folder" ? -1 : 1;
+      if (a.type !== b.type) {
+        return a.type === "folder" ? -1 : 1;
+      }
       return a.name.localeCompare(b.name);
     });
   }

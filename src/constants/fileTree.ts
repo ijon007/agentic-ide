@@ -12,7 +12,12 @@ export const MOCK_FILE_TREE: Record<string, FileTreeNode[]> = {
           path: "src/app",
           type: "folder",
           children: [
-            { name: "page.tsx", path: "src/app/page.tsx", type: "file", status: "modified" },
+            {
+              name: "page.tsx",
+              path: "src/app/page.tsx",
+              type: "file",
+              status: "modified",
+            },
             { name: "layout.tsx", path: "src/app/layout.tsx", type: "file" },
             { name: "globals.css", path: "src/app/globals.css", type: "file" },
           ],
@@ -22,8 +27,18 @@ export const MOCK_FILE_TREE: Record<string, FileTreeNode[]> = {
           path: "src/components",
           type: "folder",
           children: [
-            { name: "titlebar.tsx", path: "src/components/titlebar.tsx", type: "file", status: "new" },
-            { name: "sidebar-left.tsx", path: "src/components/sidebar-left.tsx", type: "file", status: "new" },
+            {
+              name: "titlebar.tsx",
+              path: "src/components/titlebar.tsx",
+              type: "file",
+              status: "new",
+            },
+            {
+              name: "sidebar-left.tsx",
+              path: "src/components/sidebar-left.tsx",
+              type: "file",
+              status: "new",
+            },
           ],
         },
         { name: "main.ts", path: "src/main.ts", type: "file" },
@@ -44,7 +59,12 @@ export const MOCK_FILE_TREE: Record<string, FileTreeNode[]> = {
           type: "folder",
           children: [
             { name: "routes.ts", path: "src/api/routes.ts", type: "file" },
-            { name: "handlers.ts", path: "src/api/handlers.ts", type: "file", status: "modified" },
+            {
+              name: "handlers.ts",
+              path: "src/api/handlers.ts",
+              type: "file",
+              status: "modified",
+            },
           ],
         },
         { name: "index.ts", path: "src/index.ts", type: "file" },
@@ -58,7 +78,12 @@ export const MOCK_FILE_TREE: Record<string, FileTreeNode[]> = {
       path: "components",
       type: "folder",
       children: [
-        { name: "Hero.tsx", path: "components/Hero.tsx", type: "file", status: "deleted" },
+        {
+          name: "Hero.tsx",
+          path: "components/Hero.tsx",
+          type: "file",
+          status: "deleted",
+        },
         { name: "Footer.tsx", path: "components/Footer.tsx", type: "file" },
       ],
     },
