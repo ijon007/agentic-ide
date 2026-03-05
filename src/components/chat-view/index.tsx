@@ -6,7 +6,6 @@ import { useApp } from "@/context/app-context";
 import type { Attachment } from "@/types/attachment";
 import type { ChatMessage, DiffBlock } from "@/types/message";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatInput } from "./chat-input";
 import { MessageBubble } from "./message-bubble";
 import { FilesChangedRibbon } from "./files-changed-ribbon";
@@ -33,6 +32,16 @@ export function ChatView() {
   const messages = activeChat === "c1" ? MOCK_MESSAGES : [];
   const isEmpty = messages.length === 0;
   const changedFiles = useMemo(() => collectChangedFiles(messages), [messages]);
+  const lastUserMessageId = useMemo(() => {
+    let id: string | null = null;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        id = messages[i].id;
+        break;
+      }
+    }
+    return id;
+  }, [messages]);
 
   const handleSend = (text: string, atts: Attachment[]) => {
     setInput("");
@@ -91,23 +100,41 @@ export function ChatView() {
       data-panel="chat"
       style={{ backgroundColor: "var(--bg-base)" }}
     >
-      <ScrollArea className="min-h-0 flex-1" hideScrollbar={false}>
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
         <div className="flex w-full justify-center py-4 pb-0">
-          <div className="flex w-full max-w-4xl flex-col gap-4">
-            {messages.map((msg) => (
-              <MessageBubble key={msg.id} msg={msg} />
-            ))}
+          <div className="flex w-full max-w-4xl flex-col gap-4 px-2">
+            {messages.map((msg) => {
+              const isLastUserMsg = msg.role === "user" && msg.id === lastUserMessageId;
+              const bubble = <MessageBubble key={msg.id} msg={msg} />;
+              if (isLastUserMsg) {
+                return (
+                  <div
+                    key={msg.id}
+                    className="sticky top-0 z-10 -mx-2 px-2 py-1"
+                    style={{ backgroundColor: "var(--bg-base)" }}
+                  >
+                    {bubble}
+                  </div>
+                );
+              }
+              return bubble;
+            })}
           </div>
         </div>
-      </ScrollArea>
+      </div>
 
-      <div className="flex shrink-0 flex-col w-full" style={{ backgroundColor: "var(--bg-base)" }}>
+      <div
+        className="flex shrink-0 flex-col w-full items-center pt-1"
+        style={{ backgroundColor: "var(--bg-base)" }}
+      >
         {changedFiles.length > 0 && (
-          <FilesChangedRibbon
-            fileCount={changedFiles.length}
-            onAcceptAll={() => {}}
-            onRejectAll={() => {}}
-          />
+          <div className="flex w-full max-w-4xl justify-center px-2 pt-1">
+            <FilesChangedRibbon
+              files={changedFiles}
+              onAcceptAll={() => {}}
+              onRejectAll={() => {}}
+            />
+          </div>
         )}
         <div className="flex w-full justify-center px-4 py-3 pt-1">
           <ChatInput

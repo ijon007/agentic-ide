@@ -7,7 +7,6 @@ import { DiffBlock } from "./diff-block";
 import { MessageContent } from "./blocks/message-content";
 import { ToolCallsSection } from "./blocks/tool-calls-section";
 import { SubagentBlock } from "./blocks/subagent-block";
-import { FilesChangedBlock } from "./blocks/files-changed-block";
 
 export function AssistantMessageBubble({ msg }: { msg: ChatMessage }) {
   return (
@@ -37,9 +36,6 @@ export function AssistantMessageBubble({ msg }: { msg: ChatMessage }) {
           />
         )}
         {msg.subagent && <SubagentBlock block={msg.subagent} />}
-        {msg.filesChanged && (
-          <FilesChangedBlock files={msg.filesChanged.files} />
-        )}
       </div>
     </div>
   );

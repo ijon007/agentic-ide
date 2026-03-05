@@ -120,7 +120,7 @@ export function ToolCallCardRow({
 
   return (
     <div
-      className="rounded px-3 py-2 text-[11px]"
+      className="rounded-md px-2 py-1 text-[11px]"
       style={{
         backgroundColor: "var(--bg-surface)",
         border: "1px solid var(--border-subtle)",
@@ -150,6 +150,20 @@ export function ToolCallCardRow({
         ) : (
           <ToolIcon card={normalized} status={status} />
         )}
+        {getToolDetail(normalized) && (
+          <span
+            className="truncate font-mono"
+            style={{
+              color: isSuccess(status)
+                ? ""
+                : isError(status)
+                  ? "var(--error)"
+                  : "var(--accent)",
+            }}
+          >
+            {getToolDetail(normalized)}
+          </span>
+        )}
         <Badge
           className="shrink-0 px-1.5 py-0 text-[10px]"
           variant="outline"
@@ -160,20 +174,6 @@ export function ToolCallCardRow({
         >
           {getToolLabel(normalized)}
         </Badge>
-        {getToolDetail(normalized) && (
-          <span
-            className="truncate font-mono"
-            style={{
-              color: isSuccess(status)
-                ? "var(--success)"
-                : isError(status)
-                  ? "var(--error)"
-                  : "var(--accent)",
-            }}
-          >
-            {getToolDetail(normalized)}
-          </span>
-        )}
         {"resultCount" in normalized && normalized.resultCount != null && (
           <span
             className="shrink-0 text-[10px]"

@@ -43,13 +43,13 @@ export function CodeBlock({
       }}
     >
       <div
-        className="flex items-center justify-between border-b px-3 py-1.5"
+        className="flex items-center justify-between border-b px-2 py-1"
         style={{
           borderColor: "var(--border-subtle)",
           color: "var(--text-muted)",
         }}
       >
-        <span className="font-mono text-[10px] uppercase">
+        <span className="font-mono text-xs uppercase">
           {language || "plaintext"}
         </span>
         <Button
@@ -65,11 +65,12 @@ export function CodeBlock({
           )}
         </Button>
       </div>
-      <div className="overflow-x-auto p-4 pr-10 font-mono text-xs [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0">
+      <div className="overflow-x-auto font-mono text-xs [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0">
         {html ? (
           <div
             dangerouslySetInnerHTML={{ __html: html }}
             style={{ color: "var(--text-code)" }}
+            className="p-2"
           />
         ) : (
           <pre style={{ color: "var(--text-code)" }}>

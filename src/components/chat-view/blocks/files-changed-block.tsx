@@ -12,45 +12,6 @@ function basename(path: string): string {
   return i >= 0 ? path.slice(i + 1) : path;
 }
 
-export function FilesChangedBlock({
-  files,
-  onOpenFile,
-}: {
-  files: DiffBlock[];
-  onOpenFile?: (path: string) => void;
-}) {
-  if (!files.length) return null;
-
-  return (
-    <div
-      className="overflow-hidden rounded"
-      style={{
-        backgroundColor: "var(--bg-surface)",
-        border: "1px solid var(--border-subtle)",
-      }}
-    >
-      <div
-        className="border-b px-3 py-2 text-[11px] font-medium"
-        style={{
-          borderColor: "var(--border-subtle)",
-          color: "var(--text-secondary)",
-        }}
-      >
-        Files changed ({files.length})
-      </div>
-      <div className="flex flex-col">
-        {files.map((file) => (
-          <FileDiffRow
-            key={file.id}
-            file={file}
-            onOpenFile={onOpenFile}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function FileDiffRow({
   file,
   onOpenFile,
