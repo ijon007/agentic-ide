@@ -13,7 +13,7 @@ export function AssistantMessageBubble({ msg }: { msg: ChatMessage }) {
     <div className="flex justify-start">
       <div
         className={cn(
-          "max-w-[80%] rounded-md py-2 px-2 leading-normal",
+          "w-full max-w-full rounded-md py-2 pl-2 leading-normal",
           "flex flex-col gap-2"
         )}
         style={{ color: "var(--text-primary)" }}
@@ -23,7 +23,7 @@ export function AssistantMessageBubble({ msg }: { msg: ChatMessage }) {
           <ToolCallsSection toolCalls={msg.toolCalls} />
         )}
         {msg.codeBlocks?.map((block, i) => (
-          <div key={i}>
+          <div key={i} className="w-full">
             <CodeBlock code={block.code} language={block.language} />
           </div>
         ))}

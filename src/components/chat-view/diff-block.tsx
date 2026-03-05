@@ -62,7 +62,7 @@ export function DiffBlock({
 
   return (
     <div
-      className="group relative overflow-hidden rounded"
+      className="group relative w-full overflow-hidden rounded"
       style={{
         backgroundColor: "var(--bg-surface)",
         border: "1px solid var(--border-subtle)",

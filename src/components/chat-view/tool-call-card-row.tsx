@@ -120,7 +120,7 @@ export function ToolCallCardRow({
 
   return (
     <div
-      className="rounded-md px-2 py-1 text-[11px]"
+      className="w-full rounded-md px-2 py-1 text-[11px]"
       style={{
         backgroundColor: "var(--bg-surface)",
         border: "1px solid var(--border-subtle)",

@@ -22,22 +22,24 @@ export function SubagentBlock({ block }: { block: SubagentBlockType }) {
       }}
     >
       <CollapsibleTrigger
-        className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-(--bg-elevated) cursor-pointer"
+        className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition-colors hover:bg-(--bg-elevated) cursor-pointer"
       >
-        {open ? (
-          <CaretDownIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
-        ) : (
-          <CaretRightIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
-        )}
-        <span className="font-medium text-xs" style={{ color: "var(--text-primary)" }}>
-          {block.name ?? "Subagent"}
-        </span>
+        <div className="flex items-center gap-2">
+          {open ? (
+            <CaretDownIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
+          ) : (
+            <CaretRightIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
+          )}
+          <span className="font-medium text-xs" style={{ color: "var(--text-primary)" }}>
+            {block.name ?? "Subagent"}
+          </span>
+        </div>
         <StatusBadge status={block.status} />
-        {block.summary && (
+        {/* {block.summary && (
           <span className="truncate text-[11px]" style={{ color: "var(--text-muted)" }}>
             {block.summary}
           </span>
-        )}
+        )} */}
       </CollapsibleTrigger>
       {block.messages.length > 0 && (
         <CollapsibleContent
@@ -73,7 +75,7 @@ function StatusBadge({
   return (
     <span
       className={cn(
-        "rounded px-1.5 py-0.5 text-[10px] font-medium uppercase",
+        "rounded px-1.5 py-0.5 text-[10px] font-medium",
         status === "running" && "animate-pulse"
       )}
       style={{
@@ -81,7 +83,7 @@ function StatusBadge({
         color: styles[status],
       }}
     >
-      {status}
+      {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
     </span>
   );
 }

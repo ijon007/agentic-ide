@@ -36,7 +36,7 @@ export function CodeBlock({
 
   return (
     <div
-      className="relative overflow-hidden rounded"
+      className="relative w-full overflow-hidden rounded"
       style={{
         backgroundColor: "var(--bg-surface)",
         border: "1px solid var(--border-subtle)",
