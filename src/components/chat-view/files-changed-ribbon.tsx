@@ -69,10 +69,10 @@ export function FilesChangedRibbon({
           borderColor: "var(--border-subtle)",
         }}
       >
-        <div className="flex w-full items-center justify-between gap-3 px-3 py-1.5">
+        <div className="flex w-full items-center justify-between gap-3 px-3 py-1">
           <CollapsibleTrigger
             className={cn(
-              "group/trigger flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded py-0.5 pr-2 transition-colors [&]:outline-none"
+              "group/trigger flex min-w-0 flex-1 cursor-pointer items-center gap-2 rounded py-0 pr-2 transition-colors [&]:outline-none"
             )}
             aria-label="Toggle files list"
           >
@@ -81,7 +81,7 @@ export function FilesChangedRibbon({
               style={{ color: "var(--text-muted)" }}
             />
             <span
-              className="text-[11px] font-medium"
+              className="text-sm font-medium"
               style={{ color: "var(--text-secondary)" }}
             >
               {count} file{count !== 1 ? "s" : ""} changed

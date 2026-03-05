@@ -68,7 +68,7 @@ function FileDiffRow({
       </div>
       {expanded && file.unified && (
         <div className="border-t px-2 pb-2" style={{ borderColor: "var(--border-subtle)" }}>
-          <UnifiedDiffView unified={file.unified} />
+          <UnifiedDiffView unified={file.unified} filePath={file.filePath} />
         </div>
       )}
     </div>

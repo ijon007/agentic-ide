@@ -110,7 +110,7 @@ export function ChatView() {
                 return (
                   <div
                     key={msg.id}
-                    className="sticky top-0 z-10 -mx-2 px-2 py-1"
+                    className="sticky top-0 z-10 -mx-2 px-2 py-2"
                     style={{ backgroundColor: "var(--bg-base)" }}
                   >
                     {bubble}

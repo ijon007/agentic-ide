@@ -1,3 +1,27 @@
+const EXT_TO_LANG: Record<string, string> = {
+  tsx: "tsx",
+  ts: "typescript",
+  jsx: "jsx",
+  js: "javascript",
+  mjs: "javascript",
+  cjs: "javascript",
+  css: "css",
+  scss: "scss",
+  html: "html",
+  json: "json",
+  md: "markdown",
+  py: "python",
+  sh: "bash",
+  bash: "bash",
+  yaml: "yaml",
+  yml: "yaml",
+};
+
+export function getLangFromPath(filePath: string): string {
+  const ext = filePath.split(".").pop()?.toLowerCase() ?? "";
+  return EXT_TO_LANG[ext] ?? "plaintext";
+}
+
 export interface ParsedDiffLine {
   content: string;
   lineNumber?: number;

@@ -13,7 +13,7 @@ export function AssistantMessageBubble({ msg }: { msg: ChatMessage }) {
     <div className="flex justify-start">
       <div
         className={cn(
-          "max-w-[80%] rounded-md py-2 leading-normal",
+          "max-w-[80%] rounded-md py-2 px-2 leading-normal",
           "flex flex-col gap-2"
         )}
         style={{ color: "var(--text-primary)" }}

@@ -6,24 +6,25 @@ import { cn } from "@/lib/utils";
 import type { SubagentBlock as SubagentBlockType } from "@/types/message";
 import { UserMessageBubble } from "../user-message-bubble";
 import { AssistantMessageBubble } from "../assistant-message-bubble";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export function SubagentBlock({ block }: { block: SubagentBlockType }) {
-  const [expanded, setExpanded] = useState(true);
+  const [open, setOpen] = useState(true);
 
   return (
-    <div
-      className="overflow-hidden rounded"
+    <Collapsible
+      open={open}
+      onOpenChange={setOpen}
+      className="overflow-hidden rounded w-full"
       style={{
         backgroundColor: "var(--bg-surface)",
         border: "1px solid var(--border-subtle)",
       }}
     >
-      <button
-        type="button"
-        className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-(--bg-elevated)"
-        onClick={() => setExpanded((e) => !e)}
+      <CollapsibleTrigger
+        className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-(--bg-elevated) cursor-pointer"
       >
-        {expanded ? (
+        {open ? (
           <CaretDownIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
         ) : (
           <CaretRightIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
@@ -37,10 +38,10 @@ export function SubagentBlock({ block }: { block: SubagentBlockType }) {
             {block.summary}
           </span>
         )}
-      </button>
-      {expanded && block.messages.length > 0 && (
-        <div
-          className="border-t px-3 py-2"
+      </CollapsibleTrigger>
+      {block.messages.length > 0 && (
+        <CollapsibleContent
+          className="border-t px-3 py-2 w-full"
           style={{ borderColor: "var(--border-subtle)" }}
         >
           <div className="flex flex-col gap-4">
@@ -52,9 +53,9 @@ export function SubagentBlock({ block }: { block: SubagentBlockType }) {
               )
             )}
           </div>
-        </div>
+        </CollapsibleContent>
       )}
-    </div>
+    </Collapsible>
   );
 }
 

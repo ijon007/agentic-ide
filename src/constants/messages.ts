@@ -84,7 +84,7 @@ export const MOCK_MESSAGES: ChatMessage[] = [
       setIsLoading(false);
     }
   };`,
-      unified: `--- a/src/components/LoginForm.tsx\n+++ b/src/components/LoginForm.tsx\n@@ -5,6 +5,7 @@\n+  const [isLoading, setIsLoading] = useState(false);\n   const handleSubmit = async (e: FormEvent) => {\n     e.preventDefault();\n+    if (!validateEmail(formData.email)) {\n+      setError("Please enter a valid email");\n+      return;\n+    }\n+    setIsLoading(true);\n     try {\n       await onSubmit(formData);\n+    } finally {\n+      setIsLoading(false);\n     }\n   };`,
+      unified: `--- a/src/components/LoginForm.tsx\n+++ b/src/components/LoginForm.tsx\n@@ -5,7 +5,14 @@\n-  await onSubmit(formData);\n+  const [isLoading, setIsLoading] = useState(false);\n   const handleSubmit = async (e: FormEvent) => {\n     e.preventDefault();\n+    if (!validateEmail(formData.email)) {\n+      setError("Please enter a valid email");\n+      return;\n+    }\n+    setIsLoading(true);\n     try {\n       await onSubmit(formData);\n+    } finally {\n+      setIsLoading(false);\n     }\n   };`,
     },
   },
   {

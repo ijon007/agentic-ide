@@ -65,7 +65,13 @@ export function CodeBlock({
           )}
         </Button>
       </div>
-      <div className="overflow-x-auto font-mono text-xs [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0">
+      <div
+        className="overflow-x-auto font-mono text-xs [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0"
+        style={{
+          // Match Shiki dark-plus theme background so padding and code area are the same
+          backgroundColor: "#1e1e1e",
+        }}
+      >
         {html ? (
           <div
             dangerouslySetInnerHTML={{ __html: html }}
