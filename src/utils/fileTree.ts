@@ -1,5 +1,33 @@
 import type { FileTreeNode } from "@/types/fileTree";
 
+export interface FlatProjectFile {
+  path: string;
+  projectId: string;
+  projectName?: string;
+}
+
+export function flattenFileTree(
+  tree: Record<string, FileTreeNode[]>,
+  projectNames?: Record<string, string>
+): FlatProjectFile[] {
+  const result: FlatProjectFile[] = [];
+  for (const [projectId, nodes] of Object.entries(tree)) {
+    const projectName = projectNames?.[projectId];
+    function walk(nodes: FileTreeNode[]) {
+      for (const node of nodes) {
+        if (node.type === "file") {
+          result.push({ path: node.path, projectId, projectName });
+        }
+        if (node.children?.length) {
+          walk(node.children);
+        }
+      }
+    }
+    walk(nodes);
+  }
+  return result;
+}
+
 export function buildTreeFromPaths(paths: string[]): FileTreeNode[] {
   const root: Map<string, FileTreeNode> = new Map();
 

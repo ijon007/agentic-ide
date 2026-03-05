@@ -16,7 +16,7 @@ export function MessageBubble({ msg }: { msg: ChatMessage }) {
     >
       <div
         className={cn(
-          "max-w-[80%] rounded-lg px-4 py-2.5 text-[13px] leading-normal",
+          "max-w-[80%] rounded py-2 leading-normal",
           msg.role === "user" &&
             "border border-(--border-subtle) border-l-accent border-l-2 bg-(--bg-elevated)"
         )}
