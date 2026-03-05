@@ -38,7 +38,16 @@ export const MOCK_MESSAGES: ChatMessage[] = [
         kind: "run_command",
         id: "t3",
         text: "npm run lint",
-        status: "running",
+        status: "success",
+        output: `> my-app@1.0.0 lint
+> eslint src/
+
+src/components/LoginForm.tsx
+  12:7  warning  'useCallback' is defined but never used  @typescript-eslint/no-unused-vars
+  45:3  error    Missing dependency 'onSubmit' in useEffect     react-hooks/exhaustive-deps
+
+✖ 2 problems (1 error, 1 warning)
+  1 error and 1 warning potentially fixable with the \`--fix\` option.`,
       },
     ],
   },
