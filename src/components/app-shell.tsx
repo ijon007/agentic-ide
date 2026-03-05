@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { CenterPanel } from "@/components/center-panel";
+import { GlobalCommandPalette } from "@/components/command-palette";
 import { SettingsPanel } from "@/components/settings-panel";
 import { SidebarLeft } from "@/components/sidebar-left";
 import { SidebarRight } from "@/components/sidebar-right";
@@ -343,6 +344,7 @@ function AppShellInner() {
       <Titlebar />
       <MainContentLayout />
       <SettingsPanel />
+      <GlobalCommandPalette />
     </div>
   );
 }
