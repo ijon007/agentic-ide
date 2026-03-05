@@ -120,6 +120,43 @@ src/components/LoginForm.tsx
     },
   },
   {
+    id: "m5b",
+    role: "assistant",
+    content: "I used the context7 MCP to fetch the latest React documentation for the hooks we need.",
+    toolCalls: [
+      {
+        kind: "mcp_call",
+        id: "mcp1",
+        server: "user-context7",
+        toolName: "get_documentation",
+        arguments: {
+          library: "react",
+          topic: "useState",
+          version: "18",
+        },
+        result: `# useState
+
+\`useState\` is a React Hook that lets you add a state variable to your component.
+
+## Reference
+
+\`const [state, setState] = useState(initialState)\`
+
+### Parameters
+
+- \`initialState\`: The value you want the state to initially be. It can be a value of any type, but there is a special behavior for functions.
+
+### Returns
+
+\`useState\` returns an array with exactly two values:
+
+1. The current state. During the first render, it will match the \`initialState\` you have passed.
+2. The \`set\` function that lets you update the state to a different value and trigger a re-render.`,
+        status: "success",
+      },
+    ],
+  },
+  {
     id: "m6",
     role: "assistant",
     content: "I delegated the test setup to a specialist agent.",

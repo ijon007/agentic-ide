@@ -9,7 +9,7 @@ import { AssistantMessageBubble } from "../assistant-message-bubble";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 export function SubagentBlock({ block }: { block: SubagentBlockType }) {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <Collapsible

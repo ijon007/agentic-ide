@@ -52,6 +52,16 @@ export type ToolCallCard =
       error?: string;
     }
   | {
+      kind: "mcp_call";
+      id: string;
+      server: string;
+      toolName: string;
+      arguments?: Record<string, unknown>;
+      result?: string;
+      error?: string;
+      status: ToolCallStatus;
+    }
+  | {
       kind: "generic";
       id: string;
       verb: string;
