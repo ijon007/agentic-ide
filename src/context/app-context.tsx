@@ -40,6 +40,7 @@ interface AppContextValue extends AppState {
   setActiveChat: (id: string | null) => void;
   setActiveFile: (path: string | null) => void;
   setActiveProject: (id: string | null) => void;
+  setFocusedCenterPanel: (panel: FocusedCenterPanel) => void;
   setOpenChats: (ids: string[]) => void;
   setOpenFiles: (paths: string[]) => void;
   setSelectedModel: (id: string) => void;
@@ -54,19 +55,20 @@ interface AppContextValue extends AppState {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
+/** Default: chat sidebar + chat view only; no file sidebar, no code panel, no terminal. */
 const initialState: AppState = {
   activeProject: "1",
-  activeChat: "c1",
-  openChats: ["c1"],
-  selectedModel: "gpt-4o",
+  activeChat: null,
+  openChats: [],
+  selectedModel: "composer-1.5",
   openFiles: [],
   activeFile: null,
-  codePanelVisible: true,
+  codePanelVisible: false,
   focusedCenterPanel: null,
   terminalVisible: false,
   terminalLayoutMode: "full",
   sidebarLeftVisible: true,
-  sidebarRightVisible: true,
+  sidebarRightVisible: false,
   settingsOpen: false,
 };
 

@@ -17,16 +17,8 @@ export function CenterPanel() {
 
   if (!(hasChats || hasFiles)) {
     return (
-      <main
-        className="flex h-full flex-col"
-        style={{ backgroundColor: "var(--bg-base)" }}
-      >
-        <div
-          className="flex flex-1 items-center justify-center font-mono text-sm"
-          style={{ color: "var(--text-muted)" }}
-        >
-          Select a chat or open a file
-        </div>
+      <main className="flex h-full min-h-0 min-w-0 flex-col overflow-hidden">
+        <ChatView />
       </main>
     );
   }
