@@ -1,0 +1,87 @@
+"use client";
+
+import { MOCK_MESSAGES } from "@/constants/messages";
+import { MOCK_MODELS } from "@/constants/models";
+import { useApp } from "@/context/app-context";
+import { useEffect, useRef, useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChatInput } from "./chat-input";
+import { MessageBubble } from "./message-bubble";
+
+export function ChatView() {
+  const { activeChat, selectedModel } = useApp();
+  const [input, setInput] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const model =
+    MOCK_MODELS.find((m) => m.id === selectedModel) ?? MOCK_MODELS[0];
+  const messages = activeChat === "c1" ? MOCK_MESSAGES : [];
+  const isEmpty = messages.length === 0;
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) {
+      return;
+    }
+    el.style.height = "auto";
+    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
+  }, []);
+
+  if (isEmpty) {
+    return (
+      <div
+        className="flex min-h-0 w-full flex-1 flex-col items-center justify-center overflow-hidden px-4 py-8"
+        data-panel="chat"
+        style={{ backgroundColor: "var(--bg-base)" }}
+      >
+        <div className="flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-8">
+          <div className="flex flex-col items-center gap-2 text-center">
+            <h1 className="text-5xl font-bold tracking-tight text-foreground font-mono">
+              Start building
+            </h1>
+            <span className="text-xs font-mono tracking-widest uppercase text-muted-foreground">
+              NOX Agent
+            </span>
+          </div>
+          <ChatInput
+            compact={false}
+            input={input}
+            setInput={setInput}
+            isRunning={isRunning}
+            setIsRunning={setIsRunning}
+            textareaRef={textareaRef}
+            model={model}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+      data-panel="chat"
+      style={{ backgroundColor: "var(--bg-base)" }}
+    >
+      <ScrollArea className="flex-1">
+        <div className="flex flex-col gap-4 p-4">
+          {messages.map((msg) => (
+            <MessageBubble key={msg.id} msg={msg} />
+          ))}
+        </div>
+      </ScrollArea>
+
+      <div className="flex w-full justify-center px-4 py-3">
+        <ChatInput
+          compact
+          input={input}
+          setInput={setInput}
+          isRunning={isRunning}
+          setIsRunning={setIsRunning}
+          textareaRef={textareaRef}
+          model={model}
+        />
+      </div>
+    </div>
+  );
+}
