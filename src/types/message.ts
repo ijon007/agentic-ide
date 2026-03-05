@@ -130,7 +130,9 @@ export interface ChatMessage {
   diff?: DiffBlock;
   filesChanged?: FilesChangedBlock;
   id: string;
+  planning?: boolean;
   role: MessageRole;
   subagent?: SubagentBlock;
+  thinking?: string;
   toolCalls?: ToolCallCard[];
 }

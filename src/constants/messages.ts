@@ -21,6 +21,11 @@ export const MOCK_MESSAGES: ChatMessage[] = [
     role: "assistant",
     content:
       "I'll add a loading state to the login button and fix the email validation. Let me look at the current implementation first.",
+    thinking: `1. **Read** \`LoginForm.tsx\` to see current button and validation
+2. **Add** \`isLoading\` state and spinner to the submit button
+3. **Update** email validation to reject empty/whitespace
+4. **Run** lint to confirm no regressions`,
+    planning: true,
     toolCalls: [
       {
         kind: "read_file",

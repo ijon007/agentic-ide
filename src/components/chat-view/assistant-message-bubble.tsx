@@ -5,8 +5,10 @@ import type { ChatMessage } from "@/types/message";
 import { CodeBlock } from "./code-block";
 import { DiffBlock } from "./diff-block";
 import { MessageContent } from "./blocks/message-content";
-import { ToolCallsSection } from "./blocks/tool-calls-section";
+import { PlanningBlock } from "./blocks/planning-block";
 import { SubagentBlock } from "./blocks/subagent-block";
+import { ThinkingBlock } from "./blocks/thinking-block";
+import { ToolCallsSection } from "./blocks/tool-calls-section";
 
 export function AssistantMessageBubble({ msg }: { msg: ChatMessage }) {
   return (
@@ -18,6 +20,10 @@ export function AssistantMessageBubble({ msg }: { msg: ChatMessage }) {
         )}
         style={{ color: "var(--text-primary)" }}
       >
+        {msg.thinking != null && msg.thinking !== "" && (
+          <ThinkingBlock content={msg.thinking} />
+        )}
+        {msg.planning && <PlanningBlock />}
         <MessageContent content={msg.content} markdown />
         {msg.toolCalls && msg.toolCalls.length > 0 && (
           <ToolCallsSection toolCalls={msg.toolCalls} />
