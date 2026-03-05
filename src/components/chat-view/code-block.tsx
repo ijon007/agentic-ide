@@ -1,7 +1,8 @@
 "use client";
 
 import { CheckIcon, CopyIcon } from "@phosphor-icons/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { codeToHtml } from "shiki";
 import { Button } from "@/components/ui/button";
 
 export function CodeBlock({
@@ -12,6 +13,20 @@ export function CodeBlock({
   code: string;
 }) {
   const [copied, setCopied] = useState(false);
+  const [html, setHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    codeToHtml(code, {
+      lang: language || "plaintext",
+      theme: "dark-plus",
+    }).then((highlighted) => {
+      if (!cancelled) setHtml(highlighted);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [code, language]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -27,24 +42,41 @@ export function CodeBlock({
         border: "1px solid var(--border-subtle)",
       }}
     >
-      <Button
-        className="absolute top-1 right-1 text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
-        onClick={handleCopy}
-        size="icon-xs"
-        variant="ghost"
+      <div
+        className="flex items-center justify-between border-b px-3 py-1.5"
+        style={{
+          borderColor: "var(--border-subtle)",
+          color: "var(--text-muted)",
+        }}
       >
-        {copied ? (
-          <CheckIcon className="size-3" />
+        <span className="font-mono text-[10px] uppercase">
+          {language || "plaintext"}
+        </span>
+        <Button
+          className="h-5 text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
+          onClick={handleCopy}
+          size="icon-xs"
+          variant="ghost"
+        >
+          {copied ? (
+            <CheckIcon className="size-3" />
+          ) : (
+            <CopyIcon className="size-3" />
+          )}
+        </Button>
+      </div>
+      <div className="overflow-x-auto p-4 pr-10 font-mono text-xs [&_pre]:m-0 [&_pre]:bg-transparent [&_pre]:p-0">
+        {html ? (
+          <div
+            dangerouslySetInnerHTML={{ __html: html }}
+            style={{ color: "var(--text-code)" }}
+          />
         ) : (
-          <CopyIcon className="size-3" />
+          <pre style={{ color: "var(--text-code)" }}>
+            <code>{code}</code>
+          </pre>
         )}
-      </Button>
-      <pre
-        className="overflow-x-auto p-4 pr-10 font-mono text-xs"
-        style={{ color: "var(--text-code)" }}
-      >
-        <code>{code}</code>
-      </pre>
+      </div>
     </div>
   );
 }

@@ -131,9 +131,9 @@ export function ChatInput({
 
   return (
     <div
-      className="flex w-full max-w-4xl flex-col overflow-hidden rounded-lg"
+      className="flex w-full max-w-4xl flex-col overflow-hidden rounded-lg border"
       style={{
-        backgroundColor: "#282828",
+        backgroundColor: "var(--bg-overlay)",
         minHeight: compact ? 70 : 140,
       }}
     >

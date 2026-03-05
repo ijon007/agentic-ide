@@ -6,6 +6,15 @@ export const MOCK_MESSAGES: ChatMessage[] = [
     role: "user",
     content:
       "Can you add a loading spinner to the login button and fix the validation for empty email?",
+    attachments: [
+      {
+        type: "projectFile",
+        id: "att1",
+        projectId: "p1",
+        path: "src/components/LoginForm.tsx",
+        projectName: "my-app",
+      },
+    ],
   },
   {
     id: "m2",
@@ -14,18 +23,23 @@ export const MOCK_MESSAGES: ChatMessage[] = [
       "I'll add a loading state to the login button and fix the email validation. Let me look at the current implementation first.",
     toolCalls: [
       {
+        kind: "read_file",
         id: "t1",
-        verb: "reading",
         path: "src/components/LoginForm.tsx",
-        status: "reading",
+        status: "success",
       },
       {
+        kind: "write_file",
         id: "t2",
-        verb: "wrote",
         path: "src/components/LoginForm.tsx",
-        status: "wrote",
+        status: "success",
       },
-      { id: "t3", verb: "running", text: "npm run lint...", status: "running" },
+      {
+        kind: "run_command",
+        id: "t3",
+        text: "npm run lint",
+        status: "running",
+      },
     ],
   },
   {
@@ -71,6 +85,67 @@ export const MOCK_MESSAGES: ChatMessage[] = [
     }
   };`,
       unified: `--- a/src/components/LoginForm.tsx\n+++ b/src/components/LoginForm.tsx\n@@ -5,6 +5,7 @@\n+  const [isLoading, setIsLoading] = useState(false);\n   const handleSubmit = async (e: FormEvent) => {\n     e.preventDefault();\n+    if (!validateEmail(formData.email)) {\n+      setError("Please enter a valid email");\n+      return;\n+    }\n+    setIsLoading(true);\n     try {\n       await onSubmit(formData);\n+    } finally {\n+      setIsLoading(false);\n     }\n   };`,
+    },
+  },
+  {
+    id: "m5",
+    role: "assistant",
+    content: "All edits have been applied. Summary of changes:",
+    filesChanged: {
+      files: [
+        {
+          id: "fc1",
+          filePath: "src/components/LoginForm.tsx",
+          oldContent: "  await onSubmit(formData);",
+          newContent: "  setIsLoading(true);\n  try {\n    await onSubmit(formData);\n  } finally {\n    setIsLoading(false);\n  }",
+          unified: `--- a/src/components/LoginForm.tsx\n+++ b/src/components/LoginForm.tsx\n@@ -1,3 +1,8 @@\n-  await onSubmit(formData);\n+  setIsLoading(true);\n+  try {\n+    await onSubmit(formData);\n+  } finally {\n+    setIsLoading(false);\n+  }`,
+        },
+        {
+          id: "fc2",
+          filePath: "src/components/footer.tsx",
+          oldContent: "export function Footer() {\n  return <footer />;\n}",
+          newContent: "export function Footer() {\n  return (\n    <footer className=\"py-4\">\n      <p>© 2024</p>\n    </footer>\n  );\n}",
+          unified: `--- a/src/components/footer.tsx\n+++ b/src/components/footer.tsx\n@@ -1,3 +1,9 @@\n export function Footer() {\n-  return <footer />;\n+  return (\n+    <footer className=\"py-4\">\n+      <p>© 2024</p>\n+    </footer>\n+  );\n }`,
+        },
+      ],
+    },
+  },
+  {
+    id: "m6",
+    role: "assistant",
+    content: "I delegated the test setup to a specialist agent.",
+    subagent: {
+      id: "sub1",
+      name: "Test setup agent",
+      status: "done",
+      summary: "Added Jest config and sample test",
+      messages: [
+        {
+          id: "sub-m1",
+          role: "user",
+          content: "Set up Jest for this project and add a sample test for LoginForm",
+        },
+        {
+          id: "sub-m2",
+          role: "assistant",
+          content: "I've added Jest configuration and a sample test file.",
+          toolCalls: [
+            {
+              kind: "write_file",
+              id: "sub-t1",
+              path: "jest.config.js",
+              status: "success",
+            },
+            {
+              kind: "search",
+              id: "sub-t2",
+              query: "LoginForm",
+              resultCount: 3,
+              status: "success",
+            },
+          ],
+        },
+      ],
     },
   },
 ];

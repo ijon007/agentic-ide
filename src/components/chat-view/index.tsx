@@ -4,10 +4,23 @@ import { MOCK_MESSAGES } from "@/constants/messages";
 import { MOCK_MODELS } from "@/constants/models";
 import { useApp } from "@/context/app-context";
 import type { Attachment } from "@/types/attachment";
-import { useEffect, useRef, useState } from "react";
+import type { ChatMessage, DiffBlock } from "@/types/message";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatInput } from "./chat-input";
 import { MessageBubble } from "./message-bubble";
+import { FilesChangedRibbon } from "./files-changed-ribbon";
+
+function collectChangedFiles(msgs: ChatMessage[]): DiffBlock[] {
+  const files: DiffBlock[] = [];
+  function walk(m: ChatMessage) {
+    if (m.diff) files.push(m.diff);
+    if (m.filesChanged?.files) files.push(...m.filesChanged.files);
+    if (m.subagent?.messages) m.subagent.messages.forEach(walk);
+  }
+  msgs.forEach(walk);
+  return files;
+}
 
 export function ChatView() {
   const { activeChat, selectedModel } = useApp();
@@ -19,6 +32,7 @@ export function ChatView() {
     MOCK_MODELS.find((m) => m.id === selectedModel) ?? MOCK_MODELS[0];
   const messages = activeChat === "c1" ? MOCK_MESSAGES : [];
   const isEmpty = messages.length === 0;
+  const changedFiles = useMemo(() => collectChangedFiles(messages), [messages]);
 
   const handleSend = (text: string, atts: Attachment[]) => {
     setInput("");
@@ -77,8 +91,8 @@ export function ChatView() {
       data-panel="chat"
       style={{ backgroundColor: "var(--bg-base)" }}
     >
-      <ScrollArea className="flex-1">
-        <div className="flex w-full justify-center py-4">
+      <ScrollArea className="min-h-0 flex-1" hideScrollbar={false}>
+        <div className="flex w-full justify-center py-4 pb-0">
           <div className="flex w-full max-w-4xl flex-col gap-4">
             {messages.map((msg) => (
               <MessageBubble key={msg.id} msg={msg} />
@@ -87,22 +101,31 @@ export function ChatView() {
         </div>
       </ScrollArea>
 
-      <div className="flex w-full justify-center px-4 py-3">
-        <ChatInput
-          attachments={attachments}
-          compact
-          input={input}
-          setInput={setInput}
-          isRunning={isRunning}
-          setIsRunning={setIsRunning}
-          textareaRef={textareaRef}
-          model={model}
-          onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
-          onRemoveAttachment={(id) =>
-            setAttachments((prev) => prev.filter((x) => x.id !== id))
-          }
-          onSend={handleSend}
-        />
+      <div className="flex shrink-0 flex-col w-full" style={{ backgroundColor: "var(--bg-base)" }}>
+        {changedFiles.length > 0 && (
+          <FilesChangedRibbon
+            fileCount={changedFiles.length}
+            onAcceptAll={() => {}}
+            onRejectAll={() => {}}
+          />
+        )}
+        <div className="flex w-full justify-center px-4 py-3 pt-1">
+          <ChatInput
+            attachments={attachments}
+            compact
+            input={input}
+            setInput={setInput}
+            isRunning={isRunning}
+            setIsRunning={setIsRunning}
+            textareaRef={textareaRef}
+            model={model}
+            onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
+            onRemoveAttachment={(id) =>
+              setAttachments((prev) => prev.filter((x) => x.id !== id))
+            }
+            onSend={handleSend}
+          />
+        </div>
       </div>
     </div>
   );

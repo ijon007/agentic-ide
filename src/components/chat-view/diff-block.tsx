@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { parseUnifiedDiff } from "@/utils/diff";
+import { parseUnifiedDiff, toSideBySideLines } from "@/utils/diff";
 import { useState } from "react";
+
+const MAX_VISIBLE_LINES = 24;
 
 export function DiffBlock({
   filePath,
@@ -17,7 +19,14 @@ export function DiffBlock({
   unified?: string;
 }) {
   const [mode, setMode] = useState<"unified" | "sidebyside">("unified");
+  const [expanded, setExpanded] = useState(false);
   const lines = unified ? parseUnifiedDiff(unified) : [];
+  const sideBySide = toSideBySideLines(lines);
+  const hasMore = lines.length > MAX_VISIBLE_LINES;
+  const visibleCount = expanded ? lines.length : Math.min(lines.length, MAX_VISIBLE_LINES);
+  const visibleSideBySide = expanded
+    ? sideBySide
+    : sideBySide.slice(0, MAX_VISIBLE_LINES);
 
   return (
     <div
@@ -61,12 +70,12 @@ export function DiffBlock({
           </Button>
         </div>
       </div>
-      <div className="max-h-48 overflow-auto font-mono text-[11px]">
+      <div className="max-h-64 overflow-auto font-mono text-[11px]">
         {mode === "unified" && lines.length > 0 ? (
           <div>
-            {lines.map((line, i) => (
+            {lines.slice(0, visibleCount).map((line, i) => (
               <div
-                className="px-3 py-0.5"
+                className="flex"
                 key={i}
                 style={{
                   backgroundColor:
@@ -83,11 +92,110 @@ export function DiffBlock({
                         : "var(--text-code)",
                 }}
               >
-                {line.type === "add" && "+"}
-                {line.type === "remove" && "-"}
-                {line.content}
+                <div
+                  className="w-12 shrink-0 select-none border-r px-2 py-0.5 text-right tabular-nums"
+                  style={{
+                    borderColor: "var(--border-subtle)",
+                    color: "var(--text-muted)",
+                  }}
+                >
+                  {line.lineNumber ?? ""}
+                </div>
+                <div className="min-w-0 flex-1 px-2 py-0.5">
+                  {line.type === "add" && "+"}
+                  {line.type === "remove" && "-"}
+                  {line.content}
+                </div>
               </div>
             ))}
+            {hasMore && !expanded && (
+              <button
+                type="button"
+                className="w-full py-2 text-[10px] hover:bg-(--bg-elevated)"
+                style={{ color: "var(--accent)" }}
+                onClick={() => setExpanded(true)}
+              >
+                Show {lines.length - MAX_VISIBLE_LINES} more lines
+              </button>
+            )}
+          </div>
+        ) : mode === "sidebyside" && sideBySide.length > 0 ? (
+          <div className="grid grid-cols-[1fr_1fr]">
+            <div
+              className="border-r"
+              style={{ borderColor: "var(--border-subtle)" }}
+            >
+              <div
+                className="border-b px-2 py-1 text-[10px] uppercase"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Old
+              </div>
+              {visibleSideBySide.map((row, i) => (
+                <div
+                  className={cn(
+                    "flex",
+                    row.type === "remove" && "bg-(--diff-remove)"
+                  )}
+                  key={i}
+                  style={{
+                    color:
+                      row.type === "remove"
+                        ? "var(--diff-remove-text)"
+                        : "var(--text-code)",
+                  }}
+                >
+                  <div
+                    className="w-10 shrink-0 select-none border-r px-1 py-0.5 text-right tabular-nums"
+                    style={{
+                      borderColor: "var(--border-subtle)",
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    {row.oldLineNum ?? ""}
+                  </div>
+                  <pre className="min-w-0 flex-1 overflow-x-auto px-2 py-0.5 whitespace-pre">
+                    {row.oldContent}
+                  </pre>
+                </div>
+              ))}
+            </div>
+            <div>
+              <div
+                className="border-b px-2 py-1 text-[10px] uppercase"
+                style={{ color: "var(--text-muted)" }}
+              >
+                New
+              </div>
+              {visibleSideBySide.map((row, i) => (
+                <div
+                  className={cn(
+                    "flex",
+                    row.type === "add" && "bg-(--diff-add)"
+                  )}
+                  key={i}
+                  style={{
+                    color:
+                      row.type === "add"
+                        ? "var(--diff-add-text)"
+                        : "var(--text-code)",
+                  }}
+                >
+                  <div
+                    className="w-10 shrink-0 select-none border-r px-1 py-0.5 text-right tabular-nums"
+                    style={{
+                      borderColor: "var(--border-subtle)",
+                      color: "var(--text-muted)",
+                    }}
+                  >
+                    {row.newLineNum ?? ""}
+                  </div>
+                  <pre className="min-w-0 flex-1 overflow-x-auto px-2 py-0.5 whitespace-pre">
+                    {row.newContent}
+                  </pre>
+                </div>
+              ))}
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-2 divide-x divide-(--border-subtle)">
@@ -121,24 +229,6 @@ export function DiffBlock({
             </div>
           </div>
         )}
-      </div>
-      <div
-        className="flex gap-2 border-t px-3 py-2"
-        style={{ borderColor: "var(--border-subtle)" }}
-      >
-        <Button
-          className="h-6 bg-(--success) text-white text-xs hover:bg-(--success)/90"
-          size="sm"
-        >
-          Accept
-        </Button>
-        <Button
-          className="h-6 border-(--border-default) text-(--text-primary) text-xs hover:bg-(--bg-elevated)"
-          size="sm"
-          variant="outline"
-        >
-          Reject
-        </Button>
       </div>
     </div>
   );
