@@ -3,6 +3,7 @@
 import { MOCK_MESSAGES } from "@/constants/messages";
 import { MOCK_MODELS } from "@/constants/models";
 import { useApp } from "@/context/app-context";
+import type { Attachment } from "@/types/attachment";
 import { useEffect, useRef, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChatInput } from "./chat-input";
@@ -11,12 +12,19 @@ import { MessageBubble } from "./message-bubble";
 export function ChatView() {
   const { activeChat, selectedModel } = useApp();
   const [input, setInput] = useState("");
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const model =
     MOCK_MODELS.find((m) => m.id === selectedModel) ?? MOCK_MODELS[0];
   const messages = activeChat === "c1" ? MOCK_MESSAGES : [];
   const isEmpty = messages.length === 0;
+
+  const handleSend = (text: string, atts: Attachment[]) => {
+    setInput("");
+    setAttachments([]);
+    setIsRunning(true);
+  };
 
   useEffect(() => {
     const el = textareaRef.current;
@@ -44,6 +52,7 @@ export function ChatView() {
             </span>
           </div>
           <ChatInput
+            attachments={attachments}
             compact={false}
             input={input}
             setInput={setInput}
@@ -51,6 +60,11 @@ export function ChatView() {
             setIsRunning={setIsRunning}
             textareaRef={textareaRef}
             model={model}
+            onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
+            onRemoveAttachment={(id) =>
+              setAttachments((prev) => prev.filter((x) => x.id !== id))
+            }
+            onSend={handleSend}
           />
         </div>
       </div>
@@ -64,15 +78,18 @@ export function ChatView() {
       style={{ backgroundColor: "var(--bg-base)" }}
     >
       <ScrollArea className="flex-1">
-        <div className="flex flex-col gap-4 p-4">
-          {messages.map((msg) => (
-            <MessageBubble key={msg.id} msg={msg} />
-          ))}
+        <div className="flex w-full justify-center py-4">
+          <div className="flex w-full max-w-4xl flex-col gap-4">
+            {messages.map((msg) => (
+              <MessageBubble key={msg.id} msg={msg} />
+            ))}
+          </div>
         </div>
       </ScrollArea>
 
       <div className="flex w-full justify-center px-4 py-3">
         <ChatInput
+          attachments={attachments}
           compact
           input={input}
           setInput={setInput}
@@ -80,6 +97,11 @@ export function ChatView() {
           setIsRunning={setIsRunning}
           textareaRef={textareaRef}
           model={model}
+          onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
+          onRemoveAttachment={(id) =>
+            setAttachments((prev) => prev.filter((x) => x.id !== id))
+          }
+          onSend={handleSend}
         />
       </div>
     </div>
