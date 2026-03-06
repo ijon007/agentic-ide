@@ -73,17 +73,17 @@ export function ChatInputBottomBar({
         </Button>
         {isRunning ? (
           <Button
-            className="h-8 w-8 shrink-0 rounded-full bg-(--error) hover:bg-(--error)/90"
+            className="rounded-full bg-(--error) hover:bg-(--error)/90 flex items-center justify-center"
             onClick={() => setIsRunning(false)}
             size="icon"
           >
-            <StopIcon className="size-4" />
+            <StopIcon className="size-4" weight="fill" />
           </Button>
         ) : (
           <Button
             onClick={onSend}
             size="icon"
-            className="bg-foreground hover:bg-foreground/70 text-black rounded-full"
+            className="bg-foreground hover:bg-foreground/70 text-black rounded-full "
           >
             <PaperPlaneTiltIcon className="size-4" weight="fill" />
           </Button>

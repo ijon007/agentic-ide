@@ -22,7 +22,8 @@ export function useContentHandlers(
   highlightedIndex: number,
   setHighlightedIndex: (v: number | ((i: number) => number)) => void,
   handleSelectAtItem: (item: AtMentionItem) => void,
-  closeAtMention: () => void
+  closeAtMention: () => void,
+  onSend: () => void
 ) {
   const handleContentInput = useCallback(() => {
     const el = contentEditableRef.current;
@@ -35,6 +36,18 @@ export function useContentHandlers(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       const el = contentEditableRef.current;
       if (!el) return;
+      if (e.key === "Enter") {
+        if (e.shiftKey) {
+          // Shift+Enter: allow default (newline)
+          return;
+        }
+        // Enter: send message (handled below after @-mention check)
+        if (!atMentionOpen) {
+          e.preventDefault();
+          onSend();
+          return;
+        }
+      }
       if (e.key === "Backspace") {
         const sel = window.getSelection();
         if (sel && sel.rangeCount > 0) {
@@ -91,6 +104,7 @@ export function useContentHandlers(
       onRemoveAttachment,
       closeAtMention,
       setHighlightedIndex,
+      onSend,
     ]
   );
 

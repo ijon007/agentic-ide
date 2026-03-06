@@ -81,6 +81,21 @@ export function ChatInput({
     activeProject
   );
 
+  const handleSend = useCallback(() => {
+    if (isRunning) return;
+    const el = contentEditableRef.current;
+    if (!el) return;
+    const { text, refIds } = getContentForSubmit(el);
+    const orderedRefs = refIds
+      .map((id) => attachments.find((a) => a.id === id))
+      .filter((a): a is RefAttachment => a != null && isRefAttachment(a));
+    onSend?.(text, [...orderedRefs, ...attachments.filter(isImageAttachment)]);
+    setIsRunning(true);
+    el.innerHTML = "";
+    setIsContentEmpty(true);
+    setInput("");
+  }, [isRunning, attachments, onSend, setInput]);
+
   const contentHandlers = useContentHandlers(
     contentEditableRef,
     attachments,
@@ -94,7 +109,8 @@ export function ChatInput({
     atMention.highlightedIndex,
     atMention.setHighlightedIndex,
     atMention.handleSelectAtItem,
-    atMention.closeAtMention
+    atMention.closeAtMention,
+    handleSend
   );
 
   const handleImageChange = useCallback(
@@ -114,21 +130,6 @@ export function ChatInput({
     },
     [onAddAttachment, attachments, addAttachment]
   );
-
-  const handleSend = useCallback(() => {
-    if (isRunning) return;
-    const el = contentEditableRef.current;
-    if (!el) return;
-    const { text, refIds } = getContentForSubmit(el);
-    const orderedRefs = refIds
-      .map((id) => attachments.find((a) => a.id === id))
-      .filter((a): a is RefAttachment => a != null && isRefAttachment(a));
-    onSend?.(text, [...orderedRefs, ...attachments.filter(isImageAttachment)]);
-    setIsRunning(true);
-    el.innerHTML = "";
-    setIsContentEmpty(true);
-    setInput("");
-  }, [isRunning, attachments, onSend, setInput]);
 
   useEffect(() => {
     if (input === "" && contentEditableRef.current) {
