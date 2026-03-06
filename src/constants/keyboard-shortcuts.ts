@@ -14,6 +14,11 @@ export const SHORTCUT_REGISTRY: ShortcutDef[] = [
     defaultKeys: ["ctrl", "shift", "l"],
   },
   {
+    id: "newChatPane",
+    label: "New chat pane",
+    defaultKeys: ["ctrl", "shift", "n"],
+  },
+  {
     id: "toggleSidebarLeft",
     label: "Toggle chats sidebar",
     defaultKeys: ["ctrl", "l"],

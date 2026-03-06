@@ -21,15 +21,20 @@ function collectChangedFiles(msgs: ChatMessage[]): DiffBlock[] {
   return files;
 }
 
-export function ChatView() {
+interface ChatViewProps {
+  chatId?: string;
+}
+
+export function ChatView({ chatId: chatIdProp }: ChatViewProps = {}) {
   const { activeChat, selectedModel } = useApp();
+  const chatId = chatIdProp ?? activeChat;
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const model =
     MOCK_MODELS.find((m) => m.id === selectedModel) ?? MOCK_MODELS[0];
-  const messages = activeChat === "c1" ? MOCK_MESSAGES : [];
+  const messages = chatId === "c1" ? MOCK_MESSAGES : [];
   const isEmpty = messages.length === 0;
   const changedFiles = useMemo(() => collectChangedFiles(messages), [messages]);
   const lastUserMessageId = useMemo(() => {

@@ -37,10 +37,10 @@ export function useKeyboardShortcuts() {
           setCommandPaletteOpen(true);
           break;
         case "closeTab": {
-          const chatPanel = document.querySelector('[data-panel="chat"]');
+          const activeEl = document.activeElement as Element | null;
+          const inChatPanel = activeEl?.closest?.('[data-panel="chat"]');
           const editorPanel = document.querySelector('[data-panel="editor"]');
-          const activeEl = document.activeElement;
-          if (chatPanel?.contains(activeEl as Node) && activeChat) {
+          if (inChatPanel && activeChat) {
             closeChat(activeChat);
           } else if (editorPanel?.contains(activeEl as Node) && activeFile) {
             closeFile(activeFile);
@@ -56,6 +56,9 @@ export function useKeyboardShortcuts() {
           } else if (openChats.length === 0) {
             openChat(`new-${Date.now()}`);
           }
+          break;
+        case "newChatPane":
+          openChat(`new-${Date.now()}`);
           break;
         case "toggleSidebarLeft":
           toggleSidebarLeft();
