@@ -1,12 +1,49 @@
 "use client";
 
+import { MOCK_MODELS } from "@/constants/models";
+import { DEFAULT_ACP_ID, MOCK_ACP_LIST } from "@/constants/chat-selectors";
+import type { AgentModeId } from "@/constants/chat-selectors";
+import type { ChatListMeta } from "@/types/chat";
 import {
   createContext,
   type ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
+
+const SETTINGS_STORAGE_KEY = "agentic-ide-settings";
+
+interface PersistedSettings {
+  enabledModelIds?: string[];
+  installedAcpIds?: string[];
+  syncLayoutsAcrossWindows?: boolean;
+  systemNotifications?: boolean;
+  systemTrayIcon?: boolean;
+  completionSound?: boolean;
+  shortcutOverrides?: Record<string, string[]>;
+}
+
+function loadPersistedSettings(): PersistedSettings {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw) as PersistedSettings;
+  } catch {
+    return {};
+  }
+}
+
+function savePersistedSettings(settings: PersistedSettings) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
+  } catch {
+    /* ignore */
+  }
+}
 
 export type TerminalLayoutMode =
   | "full"
@@ -20,14 +57,26 @@ interface AppState {
   activeChat: string | null;
   activeFile: string | null;
   activeProject: string | null;
+  agentMode: AgentModeId;
+  chatListMeta: Record<string, ChatListMeta>;
   codePanelVisible: boolean;
+  commandPaletteOpen: boolean;
+  completionSound: boolean;
+  enabledModelIds: string[];
   focusedCenterPanel: FocusedCenterPanel;
+  generatingChatId: string | null;
+  installedAcpIds: string[];
   openChats: string[];
   openFiles: string[];
+  selectedAcpId: string;
   selectedModel: string;
   settingsOpen: boolean;
+  shortcutOverrides: Record<string, string[]>;
   sidebarLeftVisible: boolean;
   sidebarRightVisible: boolean;
+  syncLayoutsAcrossWindows: boolean;
+  systemNotifications: boolean;
+  systemTrayIcon: boolean;
   terminalLayoutMode: TerminalLayoutMode;
   terminalVisible: boolean;
 }
@@ -40,11 +89,27 @@ interface AppContextValue extends AppState {
   setActiveChat: (id: string | null) => void;
   setActiveFile: (path: string | null) => void;
   setActiveProject: (id: string | null) => void;
+  setChatListMeta: (chatId: string, meta: Partial<ChatListMeta>) => void;
+  setCommandPaletteOpen: (open: boolean) => void;
+  setCompletionSound: (v: boolean) => void;
+  setEnabledModelIds: (ids: string[] | ((prev: string[]) => string[])) => void;
   setFocusedCenterPanel: (panel: FocusedCenterPanel) => void;
+  setGeneratingChatId: (id: string | null) => void;
+  setInstalledAcpIds: (ids: string[] | ((prev: string[]) => string[])) => void;
   setOpenChats: (ids: string[]) => void;
   setOpenFiles: (paths: string[]) => void;
+  setAgentMode: (mode: AgentModeId) => void;
+  setSelectedAcpId: (id: string) => void;
   setSelectedModel: (id: string) => void;
   setSettingsOpen: (open: boolean) => void;
+  setShortcutOverrides: (
+    overrides:
+      | Record<string, string[]>
+      | ((prev: Record<string, string[]>) => Record<string, string[]>)
+  ) => void;
+  setSyncLayoutsAcrossWindows: (v: boolean) => void;
+  setSystemNotifications: (v: boolean) => void;
+  setSystemTrayIcon: (v: boolean) => void;
   setTerminalLayoutMode: (mode: TerminalLayoutMode) => void;
   setTerminalVisible: (visible: boolean) => void;
   toggleCodePanel: () => void;
@@ -55,25 +120,80 @@ interface AppContextValue extends AppState {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-/** Default: chat sidebar + chat view only; no file sidebar, no code panel, no terminal. */
-const initialState: AppState = {
-  activeProject: "1",
-  activeChat: null,
-  openChats: [],
-  selectedModel: "composer-1.5",
-  openFiles: [],
-  activeFile: null,
-  codePanelVisible: false,
-  focusedCenterPanel: null,
-  terminalVisible: false,
-  terminalLayoutMode: "full",
-  sidebarLeftVisible: true,
-  sidebarRightVisible: false,
-  settingsOpen: false,
-};
+function getInitialState(): AppState {
+  const persisted = loadPersistedSettings();
+  const defaultModelIds = MOCK_MODELS.map((m) => m.id);
+  const defaultAcpIds = [MOCK_ACP_LIST[0]?.id ?? "cursor"].filter(Boolean);
+  return {
+    activeProject: "1",
+    activeChat: null,
+    chatListMeta: {
+      c1: { hasFinishedTask: true },
+      c2: {},
+      c3: { pendingAdditions: 5, pendingDeletions: 2 },
+      c4: { hasFinishedTask: true, pendingAdditions: 3, pendingDeletions: 1 },
+    },
+    openChats: [],
+    generatingChatId: "c2",
+    selectedModel: "composer-1.5",
+    selectedAcpId: DEFAULT_ACP_ID,
+    agentMode: "agent",
+    openFiles: [],
+    activeFile: null,
+    codePanelVisible: false,
+    commandPaletteOpen: false,
+    completionSound: persisted.completionSound ?? true,
+    enabledModelIds: persisted.enabledModelIds ?? defaultModelIds,
+    focusedCenterPanel: null,
+    installedAcpIds: persisted.installedAcpIds ?? defaultAcpIds,
+    shortcutOverrides: persisted.shortcutOverrides ?? {},
+    syncLayoutsAcrossWindows: persisted.syncLayoutsAcrossWindows ?? false,
+    systemNotifications: persisted.systemNotifications ?? true,
+    systemTrayIcon: persisted.systemTrayIcon ?? true,
+    terminalVisible: false,
+    terminalLayoutMode: "full",
+    sidebarLeftVisible: true,
+    sidebarRightVisible: false,
+    settingsOpen: false,
+  };
+}
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AppState>(initialState);
+  const [state, setState] = useState<AppState>(getInitialState);
+
+  useEffect(() => {
+    savePersistedSettings({
+      completionSound: state.completionSound,
+      enabledModelIds: state.enabledModelIds,
+      installedAcpIds: state.installedAcpIds,
+      shortcutOverrides: state.shortcutOverrides,
+      syncLayoutsAcrossWindows: state.syncLayoutsAcrossWindows,
+      systemNotifications: state.systemNotifications,
+      systemTrayIcon: state.systemTrayIcon,
+    });
+  }, [
+    state.completionSound,
+    state.enabledModelIds,
+    state.installedAcpIds,
+    state.shortcutOverrides,
+    state.syncLayoutsAcrossWindows,
+    state.systemNotifications,
+    state.systemTrayIcon,
+  ]);
+
+  const setGeneratingChatId = useCallback((id: string | null) => {
+    setState((s) => ({ ...s, generatingChatId: id }));
+  }, []);
+
+  const setChatListMeta = useCallback((chatId: string, meta: Partial<ChatListMeta>) => {
+    setState((s) => ({
+      ...s,
+      chatListMeta: {
+        ...s.chatListMeta,
+        [chatId]: { ...s.chatListMeta[chatId], ...meta },
+      },
+    }));
+  }, []);
 
   const setActiveProject = useCallback((id: string | null) => {
     setState((s) => ({ ...s, activeProject: id }));
@@ -89,6 +209,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const setSelectedModel = useCallback((id: string) => {
     setState((s) => ({ ...s, selectedModel: id }));
+  }, []);
+
+  const setSelectedAcpId = useCallback((id: string) => {
+    setState((s) => ({ ...s, selectedAcpId: id }));
+  }, []);
+
+  const setAgentMode = useCallback((mode: AgentModeId) => {
+    setState((s) => ({ ...s, agentMode: mode }));
   }, []);
 
   const setOpenFiles = useCallback((paths: string[]) => {
@@ -113,6 +241,77 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const setSettingsOpen = useCallback((open: boolean) => {
     setState((s) => ({ ...s, settingsOpen: open }));
+  }, []);
+
+  const setCommandPaletteOpen = useCallback((open: boolean) => {
+    setState((s) => ({ ...s, commandPaletteOpen: open }));
+  }, []);
+
+  const setCompletionSound = useCallback((v: boolean) => {
+    setState((s) => ({ ...s, completionSound: v }));
+  }, []);
+
+  const setEnabledModelIds = useCallback(
+    (ids: string[] | ((prev: string[]) => string[])) => {
+      setState((s) => {
+        const nextIds = typeof ids === "function" ? ids(s.enabledModelIds) : ids;
+        const selectedStillEnabled = nextIds.includes(s.selectedModel);
+        const nextSelected = selectedStillEnabled
+          ? s.selectedModel
+          : nextIds[0] ?? s.selectedModel;
+        return {
+          ...s,
+          enabledModelIds: nextIds,
+          selectedModel: nextSelected,
+        };
+      });
+    },
+    []
+  );
+
+  const setInstalledAcpIds = useCallback(
+    (ids: string[] | ((prev: string[]) => string[])) => {
+      setState((s) => {
+        const nextIds = typeof ids === "function" ? ids(s.installedAcpIds) : ids;
+        const selectedStillInstalled = nextIds.includes(s.selectedAcpId);
+        const nextAcp = selectedStillInstalled
+          ? s.selectedAcpId
+          : nextIds[0] ?? s.selectedAcpId;
+        return {
+          ...s,
+          installedAcpIds: nextIds,
+          selectedAcpId: nextAcp,
+        };
+      });
+    },
+    []
+  );
+
+  const setShortcutOverrides = useCallback(
+    (
+      overrides:
+        | Record<string, string[]>
+        | ((prev: Record<string, string[]>) => Record<string, string[]>)
+    ) => {
+      setState((s) => ({
+        ...s,
+        shortcutOverrides:
+          typeof overrides === "function" ? overrides(s.shortcutOverrides) : overrides,
+      }));
+    },
+    []
+  );
+
+  const setSyncLayoutsAcrossWindows = useCallback((v: boolean) => {
+    setState((s) => ({ ...s, syncLayoutsAcrossWindows: v }));
+  }, []);
+
+  const setSystemNotifications = useCallback((v: boolean) => {
+    setState((s) => ({ ...s, systemNotifications: v }));
+  }, []);
+
+  const setSystemTrayIcon = useCallback((v: boolean) => {
+    setState((s) => ({ ...s, systemTrayIcon: v }));
   }, []);
 
   const openFile = useCallback((path: string) => {
@@ -188,10 +387,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     ...state,
     setActiveProject,
     setActiveChat,
+    setChatListMeta,
+    setCommandPaletteOpen,
+    setCompletionSound,
+    setEnabledModelIds,
+    setInstalledAcpIds,
     setOpenChats,
+    setGeneratingChatId,
     setSelectedModel,
+    setSelectedAcpId,
+    setAgentMode,
     setOpenFiles,
     setActiveFile,
+    setShortcutOverrides,
+    setSyncLayoutsAcrossWindows,
+    setSystemNotifications,
+    setSystemTrayIcon,
     setTerminalVisible,
     setTerminalLayoutMode,
     setSettingsOpen,

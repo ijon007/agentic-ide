@@ -3,8 +3,11 @@
 import {
   CaretRightIcon,
   ChatCircleIcon,
+  CheckCircleIcon,
+  CircleNotchIcon,
   FolderIcon,
   PlusIcon,
+  SpinnerIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -16,7 +19,14 @@ import { cn } from "@/lib/utils";
 import { formatTimestamp, truncate } from "@/utils/format";
 
 export function SidebarLeft() {
-  const { activeProject, activeChat, setActiveProject, openChat } = useApp();
+  const {
+    activeProject,
+    activeChat,
+    chatListMeta,
+    generatingChatId,
+    setActiveProject,
+    openChat,
+  } = useApp();
   const [expandedProjects, setExpandedProjects] = useState<Set<string>>(
     new Set([activeProject ?? "1"])
   );
@@ -95,6 +105,12 @@ export function SidebarLeft() {
                 {isExpanded &&
                   projectChats.map((chat) => {
                     const isActive = activeChat === chat.id;
+                    const isGenerating = generatingChatId === chat.id;
+                    const meta = chatListMeta[chat.id];
+                    const hasFinishedTask = meta?.hasFinishedTask;
+                    const add = meta?.pendingAdditions ?? 0;
+                    const del = meta?.pendingDeletions ?? 0;
+                    const hasPendingDiffs = add > 0 || del > 0;
 
                     return (
                       <div className="ml-4 flex flex-col" key={chat.id}>
@@ -115,19 +131,47 @@ export function SidebarLeft() {
                           }}
                           type="button"
                         >
-                          <ChatCircleIcon
-                            className="size-4 shrink-0"
-                            style={{ color: "var(--text-muted)" }}
-                          />
+                          {isGenerating ? (
+                            <SpinnerIcon
+                              className="size-4 shrink-0 animate-spin"
+                              style={{ color: "var(--text-muted)" }}
+                              weight="bold"
+                            />
+                          ) : hasFinishedTask ? (
+                            <CheckCircleIcon
+                              className="size-4 shrink-0"
+                              weight="fill"
+                            />
+                          ) : (
+                            <ChatCircleIcon
+                              className="size-4 shrink-0"
+                              style={{ color: "var(--text-muted)" }}
+                            />
+                          )}
                           <span className="min-w-0 flex-1 truncate">
                             {truncate(chat.title, 28)}
                           </span>
-                          <span
-                            className="hidden font-mono text-xs group-hover:inline"
-                            style={{ color: "var(--text-muted)" }}
-                          >
-                            {formatTimestamp(chat.timestamp)}
-                          </span>
+                          {hasPendingDiffs && (
+                            <span
+                              className="shrink-0 font-mono text-xs tabular-nums gap-1 flex items-center"
+                              style={{ color: "var(--text-muted)" }}
+                            >
+                              <span style={{ color: "var(--diff-add-text)" }}>
+                                +{add}
+                              </span>
+                              <span style={{ color: "var(--diff-remove-text)" }}>
+                                -{del}
+                              </span>
+                            </span>
+                          )}
+                          {!hasPendingDiffs && (
+                            <span
+                              className="hidden font-mono text-xs group-hover:inline"
+                              style={{ color: "var(--text-muted)" }}
+                            >
+                              {formatTimestamp(chat.timestamp)}
+                            </span>
+                          )}
                         </button>
                       </div>
                     );
