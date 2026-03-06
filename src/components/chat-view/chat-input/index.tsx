@@ -48,7 +48,15 @@ export function ChatInput({
   onRemoveAttachment?: (id: string) => void;
   onSend?: (text: string, attachments: Attachment[]) => void;
 }) {
-  const { setSelectedModel, activeChat, activeProject } = useApp();
+  const {
+    setSelectedModel,
+    selectedAcpId,
+    setSelectedAcpId,
+    agentMode,
+    setAgentMode,
+    activeChat,
+    activeProject,
+  } = useApp();
   const contentEditableRef = useRef<HTMLDivElement>(null);
   const [isContentEmpty, setIsContentEmpty] = useState(true);
 
@@ -166,6 +174,10 @@ export function ChatInput({
         compact={compact}
         model={model}
         setSelectedModel={setSelectedModel}
+        selectedAcpId={selectedAcpId}
+        setSelectedAcpId={setSelectedAcpId}
+        agentMode={agentMode}
+        setAgentMode={setAgentMode}
         isRunning={isRunning}
         setIsRunning={setIsRunning}
         onImageChange={handleImageChange}

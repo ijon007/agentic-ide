@@ -1,28 +1,25 @@
 "use client";
 
 import {
-  CaretDownIcon,
   ImageIcon,
-  InfinityIcon,
   PaperPlaneTiltIcon,
   StopIcon,
 } from "@phosphor-icons/react";
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MOCK_MODELS } from "@/constants/models";
+import type { AgentModeId } from "@/constants/chat-selectors";
+import { AcpSelector } from "./acp-selector";
+import { AgentModeSelector } from "./agent-mode-selector";
+import { ModelSelector } from "./model-selector";
 
 export function ChatInputBottomBar({
   compact,
   model,
   setSelectedModel,
+  selectedAcpId,
+  setSelectedAcpId,
+  agentMode,
+  setAgentMode,
   isRunning,
   setIsRunning,
   onImageChange,
@@ -31,6 +28,10 @@ export function ChatInputBottomBar({
   compact?: boolean;
   model: { id: string; name: string };
   setSelectedModel: (id: string) => void;
+  selectedAcpId: string;
+  setSelectedAcpId: (id: string) => void;
+  agentMode: AgentModeId;
+  setAgentMode: (mode: AgentModeId) => void;
   isRunning: boolean;
   setIsRunning: (v: boolean) => void;
   onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -41,63 +42,18 @@ export function ChatInputBottomBar({
   return (
     <div className="flex items-center justify-between gap-3 px-2 py-2">
       <div className="flex items-center gap-1">
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                className="gap-1.5 rounded-full"
-                variant="secondary"
-              />
-            }
-          >
-            <InfinityIcon className="size-3.5 shrink-0" />
-            Agent
-            <CaretDownIcon className="size-3 shrink-0 opacity-70" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="min-w-[120px] border bg-(--bg-overlay)"
-          >
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onSelect={() => {}}
-            >
-              Agent
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            render={
-              <Button
-                className="gap-1.5"
-                variant="ghost"
-              />
-            }
-          >
-            {model.name}
-            <CaretDownIcon className="size-3 shrink-0 opacity-70" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="min-w-[160px] border"
-          >
-            <DropdownMenuRadioGroup
-              value={model.id}
-              onValueChange={(v) => v && setSelectedModel(v)}
-            >
-              {MOCK_MODELS.map((m) => (
-                <DropdownMenuRadioItem
-                  key={m.id}
-                  value={m.id}
-                  className="cursor-pointer"
-                >
-                  {m.name}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <AcpSelector
+          value={selectedAcpId}
+          onValueChange={setSelectedAcpId}
+        />
+        <AgentModeSelector
+          value={agentMode}
+          onValueChange={setAgentMode}
+        />
+        <ModelSelector
+          value={model}
+          onValueChange={setSelectedModel}
+        />
       </div>
       <div className="flex items-center gap-1">
         <input
