@@ -275,6 +275,27 @@ function ComboboxChipsInput({
   );
 }
 
+/** Input for filtering only; use inside ComboboxContent (e.g. search-in-popup pattern). */
+function ComboboxSearchInput({
+  className,
+  placeholder = "Search…",
+  ...props
+}: ComboboxPrimitive.Input.Props) {
+  return (
+    <div className="border-b border-foreground/15 p-1.5">
+      <ComboboxPrimitive.Input
+        className={cn(
+          "flex h-8 w-full rounded-md border border-foreground/15 bg-transparent px-2.5 text-xs outline-none placeholder:text-muted-foreground focus:border-foreground/30 focus:ring-2 focus:ring-foreground/10",
+          className
+        )}
+        data-slot="combobox-search-input"
+        placeholder={placeholder}
+        {...props}
+      />
+    </div>
+  );
+}
+
 function useComboboxAnchor() {
   return React.useRef<HTMLDivElement | null>(null);
 }
@@ -282,6 +303,7 @@ function useComboboxAnchor() {
 export {
   Combobox,
   ComboboxInput,
+  ComboboxSearchInput,
   ComboboxContent,
   ComboboxList,
   ComboboxItem,

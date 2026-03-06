@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { CenterPanel } from "@/components/center-panel";
 import { GlobalCommandPalette } from "@/components/command-palette";
 import { SettingsPanel } from "@/components/settings-panel";
@@ -11,6 +10,7 @@ import { Titlebar } from "@/components/titlebar";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import type { TerminalLayoutMode } from "@/context/app-context";
 import { AppProvider, useApp } from "@/context/app-context";
+import { useKeyboardShortcuts } from "@/hooks/use-keyboard-shortcuts";
 
 function SidebarsAndCenter() {
   const { sidebarLeftVisible, sidebarRightVisible } = useApp();
@@ -61,90 +61,12 @@ function SidebarsAndCenter() {
 function MainContentLayout() {
   const {
     terminalVisible,
-    toggleTerminal,
     terminalLayoutMode,
     sidebarLeftVisible,
     sidebarRightVisible,
-    toggleSidebarLeft,
-    toggleSidebarRight,
-    toggleCodePanel,
   } = useApp();
 
-  const {
-    closeChat,
-    activeChat,
-    openChat,
-    openChats,
-    closeFile,
-    activeFile,
-  } = useApp();
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "w") {
-        e.preventDefault();
-        const chatPanel = document.querySelector('[data-panel="chat"]');
-        const editorPanel = document.querySelector('[data-panel="editor"]');
-        const activeEl = document.activeElement;
-        if (chatPanel?.contains(activeEl) && activeChat) {
-          closeChat(activeChat);
-        } else if (editorPanel?.contains(activeEl) && activeFile) {
-          closeFile(activeFile);
-        }
-        return;
-      }
-      if ((e.metaKey || e.ctrlKey) && e.key === "`") {
-        e.preventDefault();
-        toggleTerminal();
-      }
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        e.shiftKey &&
-        e.key.toLowerCase() === "l"
-      ) {
-        e.preventDefault();
-        if (activeChat) {
-          closeChat(activeChat);
-        } else if (openChats.length === 0) {
-          openChat(`new-${Date.now()}`);
-        }
-      }
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        !e.shiftKey &&
-        e.key.toLowerCase() === "l"
-      ) {
-        e.preventDefault();
-        toggleSidebarLeft();
-      }
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        e.shiftKey &&
-        e.key.toLowerCase() === "b"
-      ) {
-        e.preventDefault();
-        toggleCodePanel();
-        return;
-      }
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "b") {
-        e.preventDefault();
-        toggleSidebarRight();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    toggleTerminal,
-    toggleSidebarLeft,
-    toggleSidebarRight,
-    toggleCodePanel,
-    closeChat,
-    activeChat,
-    openChat,
-    openChats,
-    closeFile,
-    activeFile,
-  ]);
+  useKeyboardShortcuts();
 
   const showTerminal = terminalVisible;
   const mode: TerminalLayoutMode = terminalLayoutMode;

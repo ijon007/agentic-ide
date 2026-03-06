@@ -1,23 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useApp } from "@/context/app-context";
 import { CommandPaletteDialog } from "./command-palette-dialog";
 
 export function GlobalCommandPalette() {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
-        e.preventDefault();
-        setOpen(true);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  const { commandPaletteOpen, setCommandPaletteOpen } = useApp();
 
   return (
-    <CommandPaletteDialog open={open} onOpenChange={setOpen} />
+    <CommandPaletteDialog
+      open={commandPaletteOpen}
+      onOpenChange={setCommandPaletteOpen}
+    />
   );
 }
