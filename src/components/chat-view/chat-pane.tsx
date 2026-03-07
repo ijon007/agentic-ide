@@ -51,13 +51,7 @@ export function ChatPane({ chatId }: ChatPaneProps) {
       tabIndex={0}
       style={{ backgroundColor: "var(--bg-base)" }}
     >
-      <div
-        className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-2"
-        style={{
-          backgroundColor: "var(--bg-surface)",
-          borderColor: "var(--border-subtle)",
-        }}
-      >
+      <div className="flex shrink-0 items-center justify-between gap-2 px-3 py-2">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {isGenerating ? (
             <SpinnerIcon

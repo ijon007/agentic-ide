@@ -7,7 +7,7 @@ export interface ShortcutDef {
 export const SHORTCUT_REGISTRY: ShortcutDef[] = [
   { id: "commandPalette", label: "Command palette", defaultKeys: ["ctrl", "k"] },
   { id: "closeTab", label: "Close tab", defaultKeys: ["ctrl", "w"] },
-  { id: "toggleTerminal", label: "Toggle terminal", defaultKeys: ["ctrl", "`"] },
+  { id: "toggleTerminal", label: "Toggle terminal", defaultKeys: ["ctrl", "j"] },
   {
     id: "closeOrNewChat",
     label: "Close chat / New chat",
