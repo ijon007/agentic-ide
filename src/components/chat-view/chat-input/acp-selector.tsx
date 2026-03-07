@@ -37,9 +37,12 @@ export function AcpSelector({
           className={cn("gap-1.5 min-w-24 justify-between text-xs", className)}
           variant="ghost"
         >
-          {selected?.logo && (
-            <img src={selected.logo} alt="" className="size-4 object-contain" />
-          )}
+          {selected &&
+            (selected.Icon ? (
+              <selected.Icon className="size-4 shrink-0" />
+            ) : selected.logo ? (
+              <img src={selected.logo} alt="" className="size-4 object-contain" />
+            ) : null)}
           {selected?.name ?? "Select ACP"}
           <CaretDownIcon className="size-3" />
         </Button>
@@ -58,11 +61,17 @@ export function AcpSelector({
               value={item.id}
               className="cursor-pointer"
             >
-              <img
-                src={item.logo}
-                alt=""
-                className={`${item.name.toLowerCase() === "codex" ? "size-5" : "size-4"} object-contain`}
-              />
+              {item.Icon ? (
+                <item.Icon
+                  className={`${item.name.toLowerCase() === "codex" ? "size-5" : "size-4"} shrink-0`}
+                />
+              ) : (
+                <img
+                  src={item.logo}
+                  alt=""
+                  className={`${item.name.toLowerCase() === "codex" ? "size-5" : "size-4"} object-contain`}
+                />
+              )}
               {item.name}
             </DropdownMenuRadioItem>
           ))}

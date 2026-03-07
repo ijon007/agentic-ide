@@ -2,7 +2,7 @@
 
 import { CenterPanel } from "@/components/center-panel";
 import { GlobalCommandPalette } from "@/components/command-palette";
-import { SettingsPanel } from "@/components/settings-panel";
+import { SettingsPanel } from "@/components/settings/settings-panel";
 import { SidebarLeft } from "@/components/sidebar-left";
 import { SidebarRight } from "@/components/sidebar-right";
 import { TerminalPanel } from "@/components/terminal-panel";

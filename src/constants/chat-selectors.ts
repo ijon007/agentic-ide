@@ -2,6 +2,7 @@ import {
   ChatsIcon,
   InfinityIcon,
   ListChecksIcon,
+  OpenAiLogoIcon,
 } from "@phosphor-icons/react";
 import type { ComponentType } from "react";
 
@@ -14,7 +15,9 @@ export interface AcpItem {
   name: string;
   description?: string;
   /** Path to provider logo (e.g. /acp-logos/cursor.svg). */
-  logo: string;
+  logo?: string;
+  /** Optional Phosphor icon component (e.g. for Codex use OpenAiLogoIcon). */
+  Icon?: ComponentType<AcpIconProps>;
 }
 
 export interface AgentModeItem {
@@ -28,7 +31,7 @@ export const MOCK_ACP_LIST: AcpItem[] = [
     id: "cursor",
     name: "Cursor",
     description: "Cursor's AI-powered coding assistant.",
-    logo: "/acp-logos/CUBE_25D.svg",
+    logo: "/acp-logos/cursor.svg",
   },
   {
     id: "opencode",
@@ -40,7 +43,7 @@ export const MOCK_ACP_LIST: AcpItem[] = [
     id: "codex",
     name: "Codex",
     description: "Codex agent for code generation and editing.",
-    logo: "/acp-logos/chat.svg",
+    Icon: OpenAiLogoIcon,
   },
   {
     id: "claude-code",
