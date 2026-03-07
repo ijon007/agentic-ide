@@ -1,6 +1,7 @@
 "use client";
 
-import { FileCodeIcon, CaretDownIcon, CaretUpIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CaretUpIcon } from "@phosphor-icons/react";
+import { FileIcon } from "@react-symbols/icons/utils";
 import { parseUnifiedDiff, getLangFromPath, getDiffStats } from "@/utils/diff";
 import { useState, useEffect } from "react";
 import { codeToHtml } from "shiki";
@@ -76,7 +77,9 @@ export function DiffBlock({
         }}
       >
         <div className="flex min-w-0 items-center gap-2">
-          <FileCodeIcon className="size-3.5 shrink-0" style={{ color: "var(--accent)" }} />
+          <span className="size-3.5 shrink-0 flex items-center justify-center">
+            <FileIcon fileName={basename(filePath)} width={14} height={14} />
+          </span>
           <span className="truncate font-mono text-[11px]">{basename(filePath)}</span>
         </div>
         {visibleLines.length > 0 && (

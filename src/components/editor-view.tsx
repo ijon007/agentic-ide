@@ -1,6 +1,7 @@
 "use client";
 
-import { FileCodeIcon, XIcon } from "@phosphor-icons/react";
+import { FileIcon } from "@react-symbols/icons/utils";
+import { XIcon } from "@phosphor-icons/react";
 import dynamic from "next/dynamic";
 import { useApp } from "@/context/app-context";
 import { cn } from "@/lib/utils";
@@ -54,7 +55,9 @@ function hello() {
           >
             <div className="min-w-0 flex-1 overflow-x-auto overflow-y-hidden scrollbar-hidden">
               <div className="flex h-full shrink-0 items-stretch">
-            {openFiles.map((path) => (
+            {openFiles.map((path) => {
+              const fileName = path.split("/").pop() ?? path;
+              return (
               <div
                 className={cn(
                   "group flex shrink-0 cursor-pointer items-center gap-2 border-r px-3 py-1.5 font-mono text-xs transition-colors",
@@ -80,9 +83,11 @@ function hello() {
                 }}
                 tabIndex={0}
               >
-                <FileCodeIcon className="size-3 shrink-0" />
+                <span className="size-3 shrink-0 flex items-center justify-center">
+                  <FileIcon fileName={fileName} width={16} height={16} />
+                </span>
                 <span className="max-w-[120px] truncate">
-                  {path.split("/").pop()}
+                  {fileName}
                 </span>
                 <button
                   className={cn(
@@ -96,7 +101,8 @@ function hello() {
                   <XIcon className="size-3" />
                 </button>
               </div>
-            ))}
+            );
+            })}
               </div>
             </div>
           </div>

@@ -3,11 +3,11 @@
 import {
   CaretDownIcon,
   CaretRightIcon,
-  FileIcon,
   FolderIcon,
   FolderOpenIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
+import { FileIcon } from "@react-symbols/icons/utils";
 import { cn } from "@/lib/utils";
 import type { FileTreeNode } from "@/types/fileTree";
 
@@ -83,10 +83,9 @@ export function FileTreeItem({
         ) : (
           <>
             <span className="w-[22px] shrink-0" />
-            <FileIcon
-              className="size-4 shrink-0"
-              style={{ color: "var(--text-muted)" }}
-            />
+            <span className="size-4 shrink-0 flex items-center justify-center">
+              <FileIcon fileName={node.name} width={16} height={16} />
+            </span>
           </>
         )}
         <span

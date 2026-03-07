@@ -1,6 +1,7 @@
 "use client";
 
-import { CaretDownIcon, CaretRightIcon, FileCodeIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CaretRightIcon } from "@phosphor-icons/react";
+import { FileIcon } from "@react-symbols/icons/utils";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MOCK_PROJECTS } from "@/constants/projects";
@@ -49,7 +50,13 @@ function FileDiffRow({
           className="-mx-1 flex min-w-0 flex-1 items-center gap-2 rounded px-1 py-0.5 text-left transition-colors hover:bg-(--bg-elevated)"
           onClick={() => onOpenFile?.(file.filePath)}
         >
-          <FileCodeIcon className="size-3.5 shrink-0" style={{ color: "var(--accent)" }} />
+          <span className="size-3.5 shrink-0 flex items-center justify-center">
+            <FileIcon
+              fileName={file.filePath.split("/").pop() ?? file.filePath}
+              width={14}
+              height={14}
+            />
+          </span>
           <span
             className="min-w-0 flex-1 truncate font-mono text-sm"
             style={{ color: "var(--text-primary)" }}

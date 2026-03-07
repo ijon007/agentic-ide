@@ -1,6 +1,7 @@
 "use client";
 
-import { CaretDownIcon, CaretRightIcon, FileCodeIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, CaretRightIcon } from "@phosphor-icons/react";
+import { FileIcon } from "@react-symbols/icons/utils";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import type { DiffBlock } from "@/types/message";
@@ -51,7 +52,9 @@ function FileDiffRow({
           className="flex min-w-0 flex-1 items-center gap-2 text-left transition-colors hover:bg-(--bg-elevated) rounded py-0.5 -mx-1 px-1"
           onClick={() => onOpenFile?.(file.filePath)}
         >
-          <FileCodeIcon className="size-3.5 shrink-0" style={{ color: "var(--accent)" }} />
+          <span className="size-3.5 shrink-0 flex items-center justify-center">
+            <FileIcon fileName={name} width={14} height={14} />
+          </span>
           <span className="min-w-0 flex-1 truncate font-mono text-[11px]" style={{ color: "var(--text-primary)" }}>
             {name}
           </span>

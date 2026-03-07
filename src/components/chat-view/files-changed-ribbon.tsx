@@ -1,11 +1,7 @@
 "use client";
 
-import {
-  CaretDownIcon,
-  CheckIcon,
-  FileCodeIcon,
-  XIcon,
-} from "@phosphor-icons/react";
+import { CaretDownIcon, CheckIcon, XIcon } from "@phosphor-icons/react";
+import { FileIcon as SymbolFileIcon } from "@react-symbols/icons/utils";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -27,23 +23,10 @@ function getFileStats(file: DiffBlock): { adds: number; removes: number } {
 }
 
 function FileIcon({ path }: { path: string }) {
-  const ext = path.slice(path.lastIndexOf("."));
-  if (ext === ".tsx" || ext === ".jsx")
-    return (
-      <FileCodeIcon
-        className="size-3.5 shrink-0"
-        style={{ color: "var(--accent)" }}
-      />
-    );
+  const fileName = path.split("/").pop() ?? path;
   return (
-    <span
-      className="flex size-4 shrink-0 items-center justify-center rounded text-[9px] font-bold"
-      style={{
-        backgroundColor: "var(--accent)",
-        color: "var(--bg-base)",
-      }}
-    >
-      TS
+    <span className="size-3.5 shrink-0 flex items-center justify-center">
+      <SymbolFileIcon fileName={fileName} width={14} height={14} />
     </span>
   );
 }
