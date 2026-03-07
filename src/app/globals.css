@@ -197,3 +197,8 @@ html.dark {
     background-position: -200% center;
   }
 }
+
+/* In-app terminal (xterm.js) */
+.terminal-container .xterm-viewport {
+  background-color: var(--bg-base) !important;
+}
