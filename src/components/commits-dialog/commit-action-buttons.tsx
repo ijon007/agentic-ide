@@ -1,6 +1,5 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
+import { ArrowUpIcon } from "@phosphor-icons/react";
 
 export function CommitActionButtons({
   onCommit,
@@ -10,20 +9,12 @@ export function CommitActionButtons({
   onCommitAndPush: () => void;
 }) {
   return (
-    <div className="flex gap-2">
-      <Button
-        variant="default"
-        onClick={onCommit}
-        className="flex-1"
-      >
-        Commit
-      </Button>
+    <div className="flex gap-2 w-full">
       <Button
         onClick={onCommitAndPush}
-        className="flex-1"
-        variant="outline"
+        className="bg-foreground text-background hover:bg-foreground/80 w-full"
       >
-        Commit and Push
+        <span className="text-sm font-medium">Continue</span>
       </Button>
     </div>
   );

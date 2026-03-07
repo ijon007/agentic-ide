@@ -130,6 +130,14 @@ export function Titlebar() {
       </div>
 
       <div className="flex items-center gap-1">
+        <Button
+          className="flex h-8 shrink-0 items-center gap-2 px-3 text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
+          onClick={() => setCommitsDialogOpen(true)}
+          variant="ghost"
+        >
+          <GitCommitIcon className="size-5 shrink-0" weight="bold" />
+          <span className="text-sm font-semibold">Commit</span>
+        </Button>
         <Tooltip>
           <TooltipTrigger
             render={
@@ -230,26 +238,6 @@ export function Titlebar() {
             side="bottom"
           >
             Toggle files (Ctrl+B)
-          </TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                className="text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
-                onClick={() => setCommitsDialogOpen(true)}
-                size="icon"
-                variant="ghost"
-              >
-                <GitCommitIcon className="size-5" weight="bold" />
-              </Button>
-            }
-          />
-          <TooltipContent
-            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
-            side="bottom"
-          >
-            Commit changes
           </TooltipContent>
         </Tooltip>
         <Tooltip>

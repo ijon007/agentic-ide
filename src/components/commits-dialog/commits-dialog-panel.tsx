@@ -1,5 +1,6 @@
 "use client";
 
+import { PencilLineIcon, SparkleIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import {
   Dialog,
@@ -75,14 +76,16 @@ export function CommitsDialogPanel() {
           >
             <TabsTrigger
               value="automatic"
-              className="w-full"
+              className="flex w-full items-center justify-center gap-2"
             >
+              <SparkleIcon className="size-4" weight="bold" />
               Automatic
             </TabsTrigger>
             <TabsTrigger
               value="manual"
-              className="w-full"
+              className="flex w-full items-center justify-center gap-2"
             >
+              <PencilLineIcon className="size-4" weight="bold" />
               Manual
             </TabsTrigger>
           </TabsList>
