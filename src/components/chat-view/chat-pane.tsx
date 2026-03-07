@@ -45,7 +45,7 @@ export function ChatPane({ chatId }: ChatPaneProps) {
 
   return (
     <div
-      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+      className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
       data-panel="chat"
       onFocusCapture={handleFocus}
       tabIndex={0}
@@ -87,7 +87,10 @@ export function ChatPane({ chatId }: ChatPaneProps) {
           <XIcon className="size-4" weight="bold" />
         </Button>
       </div>
-      <div className="min-h-0 flex-1 overflow-hidden" onClick={handleFocus}>
+      <div
+        className="flex min-h-0 flex-1 flex-col overflow-hidden"
+        onClick={handleFocus}
+      >
         <ChatView chatId={chatId} />
       </div>
     </div>

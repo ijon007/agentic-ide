@@ -4,8 +4,10 @@ import {
   CaretRightIcon,
   ChatCircleIcon,
   CheckCircleIcon,
-  CircleNotchIcon,
   FolderIcon,
+  FolderOpenIcon,
+  GitBranchIcon,
+  GitMergeIcon,
   PlusIcon,
   SpinnerIcon,
 } from "@phosphor-icons/react";
@@ -80,7 +82,7 @@ export function SidebarLeft() {
             return (
               <div className="flex flex-col" key={project.id}>
                 <button
-                  className="flex items-center gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors hover:bg-(--bg-elevated)"
+                  className="flex items-center justify-between gap-2 rounded px-2 py-1.5 text-left text-sm transition-colors hover:bg-(--bg-elevated)"
                   onClick={() => {
                     toggleProject(project.id);
                     setActiveProject(project.id);
@@ -88,6 +90,13 @@ export function SidebarLeft() {
                   style={{ color: "var(--text-primary)" }}
                   type="button"
                 >
+                  <div className="flex items-center gap-2">
+                    <FolderIcon
+                      className="size-4 shrink-0"
+                      style={{ color: "var(--text-secondary)" }}
+                    />
+                    <span className="min-w-0 truncate">{project.name}</span>
+                  </div>
                   <CaretRightIcon
                     className={cn(
                       "size-4 shrink-0 transition-transform",
@@ -95,11 +104,6 @@ export function SidebarLeft() {
                     )}
                     style={{ color: "var(--text-secondary)" }}
                   />
-                  <FolderIcon
-                    className="size-4 shrink-0"
-                    style={{ color: "var(--text-secondary)" }}
-                  />
-                  <span className="min-w-0 truncate">{project.name}</span>
                 </button>
 
                 {isExpanded &&
@@ -108,9 +112,62 @@ export function SidebarLeft() {
                     const isGenerating = generatingChatId === chat.id;
                     const meta = chatListMeta[chat.id];
                     const hasFinishedTask = meta?.hasFinishedTask;
+                    const branchMerged = meta?.branchMerged;
+                    const branchOpened = meta?.branchOpened;
+                    const worktreeOpen = meta?.worktreeOpen;
                     const add = meta?.pendingAdditions ?? 0;
                     const del = meta?.pendingDeletions ?? 0;
                     const hasPendingDiffs = add > 0 || del > 0;
+
+                    const iconColor = "var(--text-muted)";
+                    const renderIcon = () => {
+                      if (isGenerating)
+                        return (
+                          <SpinnerIcon
+                            className="size-4 shrink-0 animate-spin"
+                            style={{ color: iconColor }}
+                            weight="bold"
+                          />
+                        );
+                      if (hasFinishedTask)
+                        return (
+                          <CheckCircleIcon
+                            className="size-4 shrink-0"
+                            style={{ color: "var(--chat-icon-default)" }}
+                            weight="fill"
+                          />
+                        );
+                      if (branchMerged)
+                        return (
+                          <GitMergeIcon
+                            className="size-4 shrink-0"
+                            style={{ color: "var(--chat-icon-merged)" }}
+                            weight="duotone"
+                          />
+                        );
+                      if (branchOpened)
+                        return (
+                          <GitBranchIcon
+                            className="size-4 shrink-0"
+                            style={{ color: "var(--chat-icon-branch)" }}
+                            weight="duotone"
+                          />
+                        );
+                      if (worktreeOpen)
+                        return (
+                          <FolderOpenIcon
+                            className="size-4 shrink-0"
+                            style={{ color: "var(--chat-icon-worktree)" }}
+                            weight="duotone"
+                          />
+                        );
+                      return (
+                        <ChatCircleIcon
+                          className="size-4 shrink-0"
+                          style={{ color: "var(--chat-icon-default)" }}
+                        />
+                      );
+                    };
 
                     return (
                       <div className="ml-4 flex flex-col" key={chat.id}>
@@ -131,23 +188,7 @@ export function SidebarLeft() {
                           }}
                           type="button"
                         >
-                          {isGenerating ? (
-                            <SpinnerIcon
-                              className="size-4 shrink-0 animate-spin"
-                              style={{ color: "var(--text-muted)" }}
-                              weight="bold"
-                            />
-                          ) : hasFinishedTask ? (
-                            <CheckCircleIcon
-                              className="size-4 shrink-0"
-                              weight="fill"
-                            />
-                          ) : (
-                            <ChatCircleIcon
-                              className="size-4 shrink-0"
-                              style={{ color: "var(--text-muted)" }}
-                            />
-                          )}
+                          {renderIcon()}
                           <span className="min-w-0 flex-1 truncate">
                             {truncate(chat.title, 28)}
                           </span>
@@ -165,13 +206,13 @@ export function SidebarLeft() {
                             </span>
                           )}
                           {!hasPendingDiffs && (
-                            <span
-                              className="hidden font-mono text-xs group-hover:inline"
-                              style={{ color: "var(--text-muted)" }}
-                            >
-                              {formatTimestamp(chat.timestamp)}
-                            </span>
-                          )}
+                              <span
+                                className="hidden font-mono text-xs group-hover:inline"
+                                style={{ color: "var(--text-muted)" }}
+                              >
+                                {formatTimestamp(chat.timestamp)}
+                              </span>
+                            )}
                         </button>
                       </div>
                     );

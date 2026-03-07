@@ -101,11 +101,11 @@ export function ChatView({ chatId: chatIdProp }: ChatViewProps = {}) {
 
   return (
     <div
-      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden h-full"
       data-panel="chat"
       style={{ backgroundColor: "var(--bg-base)" }}
     >
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
         <div className="flex w-full justify-center py-4 pb-0">
           <div className="flex w-full max-w-4xl flex-col gap-4 px-2">
             {messages.map((msg) => {

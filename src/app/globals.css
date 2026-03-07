@@ -74,6 +74,11 @@
   --diff-add-text: #4ade80;
   --diff-remove: #f871711a;
   --diff-remove-text: #f87171;
+  /* Chat sidebar icon colors (GitHub-like) */
+  --chat-icon-default: #4ade80;
+  --chat-icon-merged: #a371f7;
+  --chat-icon-branch: #4ade80;
+  --chat-icon-worktree: #58a6ff;
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
