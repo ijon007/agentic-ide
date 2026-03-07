@@ -118,7 +118,7 @@ export function SettingsPanel() {
         style={{ backgroundColor: "var(--bg-surface)" }}
       >
         <aside
-          className="flex w-44 shrink-0 flex-col border-r py-3"
+          className="flex shrink-0 flex-col border-r py-3"
           style={{ borderColor: "var(--border-subtle)" }}
         >
           {SECTIONS.map((section) => {
@@ -126,7 +126,7 @@ export function SettingsPanel() {
             return (
               <button
                 className={cn(
-                  "flex items-center gap-2 px-3 py-2 text-left font-medium text-xs transition-colors",
+                  "flex items-center gap-2 px-3 py-2 text-left font-medium text-sm transition-colors cursor-pointer",
                   activeSection === section.id
                     ? "bg-(--selection-bg)"
                     : "hover:bg-(--bg-elevated)"
@@ -141,7 +141,7 @@ export function SettingsPanel() {
                 }}
                 type="button"
               >
-                <Icon className="size-4 shrink-0" />
+                <Icon className="size-4 shrink-0" weight="bold" />
                 {section.label}
               </button>
             );
@@ -296,14 +296,14 @@ export function SettingsPanel() {
             {activeSection === "keyboardShortcuts" && (
               <section>
                 <h3
-                  className="mb-3 font-medium text-[11px] uppercase tracking-wider"
-                  style={{ color: "var(--text-muted)" }}
+                  className="mb-1 font-semibold text-sm"
+                  style={{ color: "var(--text-primary)" }}
                 >
                   Keyboard shortcuts
                 </h3>
                 <p
-                  className="mb-4 text-xs"
-                  style={{ color: "var(--text-secondary)" }}
+                  className="mb-4 text-[11px]"
+                  style={{ color: "var(--text-muted)" }}
                 >
                   Click a shortcut to edit. Type the new keys and blur to save.
                 </p>
@@ -323,7 +323,7 @@ export function SettingsPanel() {
                       {editingShortcutId === def.id ? (
                         <Input
                           autoFocus
-                          className="h-7 w-32 border-(--border-default) bg-(--bg-elevated) text-xs font-mono"
+                          className="h-7 w-32 bg-(--bg-elevated) text-xs font-mono focus-visible:ring-px focus-visible:ring-(--border-subtle)"
                           onBlur={() => saveShortcut(def.id)}
                           onChange={(e) =>
                             setShortcutInputValue(e.target.value)
@@ -337,7 +337,7 @@ export function SettingsPanel() {
                         />
                       ) : (
                         <button
-                          className="cursor-pointer rounded border border-(--border-default) bg-(--bg-elevated) px-2 py-1 font-mono text-[10px] transition-colors hover:bg-(--selection-bg)"
+                          className="cursor-pointer rounded border border-(--border-subtle) bg-transparent px-1.5 py-0.5 font-mono text-sm transition-colors hover:bg-(--bg-elevated) focus:outline-none focus-visible:ring-1 focus-visible:ring-(--border-subtle)"
                           onClick={() => startEditingShortcut(def.id)}
                           type="button"
                         >
@@ -452,7 +452,6 @@ export function SettingsPanel() {
                 <div className="flex flex-col gap-2">
                   {MOCK_ACP_LIST.map((acp) => {
                     const isInstalled = installedAcpIds.includes(acp.id);
-                    const Icon = acp.Icon;
                     return (
                       <div
                         className="flex items-center justify-between gap-4 rounded-lg border py-2.5 pl-3 pr-2"
@@ -463,8 +462,10 @@ export function SettingsPanel() {
                         }}
                       >
                         <div className="flex min-w-0 flex-1 items-center gap-3 p-2">
-                          <Icon
-                            className="size-5 shrink-0"
+                          <img
+                            src={acp.logo}
+                            alt=""
+                            className={`${acp.name.toLowerCase() === "codex" ? "size-10" : "size-8"} shrink-0 object-contain`}
                           />
                           <div>
                             <p

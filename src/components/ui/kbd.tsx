@@ -32,17 +32,45 @@ export interface KbdProps {
   className?: string;
 }
 
+const keyLabelMap: Record<string, string> = {
+  command: "⌘",
+  cmd: "⌘",
+  control: "Ctrl",
+  ctrl: "Ctrl",
+  alt: "Alt",
+  option: "Option",
+  shift: "Shift",
+  space: "Space",
+  arrowleft: "←",
+  left: "←",
+  arrowdown: "↓",
+  down: "↓",
+  arrowup: "↑",
+  up: "↑",
+  arrowright: "→",
+  right: "→",
+  enter: "↵",
+  return: "↵",
+  backtick: "`",
+  "`": "`",
+};
+
 function getKeyDisplay(item: KeyItem): string {
   const key = typeof item === "string" ? item : item.display;
   const lowerKey = key.toLowerCase();
-  return keySymbolMap[lowerKey] ?? key.length === 1 ? key.toUpperCase() : key;
+  const label = keyLabelMap[lowerKey];
+  if (label) return label;
+  const symbol = keySymbolMap[lowerKey];
+  if (symbol) return symbol;
+  if (key.length === 1) return key.toUpperCase();
+  return key.charAt(0).toUpperCase() + key.slice(1).toLowerCase();
 }
 
 export function Kbd({ keys = [], className }: KbdProps) {
   return (
     <kbd
       className={cn(
-        "inline-flex items-center gap-0.5 rounded border border-(--border-default) bg-(--bg-elevated) px-1.5 py-0.5 font-mono text-[10px] font-medium text-(--text-secondary)",
+        "inline-flex items-center gap-0.5 rounded border border-(--border-subtle) bg-(--text-muted)/8 px-1 py-px font-mono text-[10px] font-medium leading-none text-(--text-muted)",
         className
       )}
     >

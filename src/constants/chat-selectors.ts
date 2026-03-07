@@ -1,6 +1,5 @@
 import {
   ChatsIcon,
-  CodeIcon,
   InfinityIcon,
   ListChecksIcon,
 } from "@phosphor-icons/react";
@@ -8,16 +7,14 @@ import type { ComponentType } from "react";
 
 export type AcpIconProps = { className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" };
 
-/** Placeholder until official ACP icons are added. */
-const AcpPlaceholderIcon = CodeIcon as ComponentType<AcpIconProps>;
-
 export type AgentModeId = "agent" | "plan" | "ask";
 
 export interface AcpItem {
   id: string;
   name: string;
   description?: string;
-  Icon: ComponentType<AcpIconProps>;
+  /** Path to provider logo (e.g. /acp-logos/cursor.svg). */
+  logo: string;
 }
 
 export interface AgentModeItem {
@@ -31,25 +28,31 @@ export const MOCK_ACP_LIST: AcpItem[] = [
     id: "cursor",
     name: "Cursor",
     description: "Cursor's AI-powered coding assistant.",
-    Icon: AcpPlaceholderIcon,
+    logo: "/acp-logos/CUBE_25D.svg",
   },
   {
     id: "opencode",
     name: "OpenCode",
     description: "Open-source coding assistant.",
-    Icon: AcpPlaceholderIcon,
+    logo: "/acp-logos/opencode.svg",
   },
   {
     id: "codex",
     name: "Codex",
     description: "Codex agent for code generation and editing.",
-    Icon: AcpPlaceholderIcon,
+    logo: "/acp-logos/chat.svg",
   },
   {
     id: "claude-code",
     name: "Claude Code",
     description: "Anthropic's Claude for coding tasks.",
-    Icon: AcpPlaceholderIcon,
+    logo: "/acp-logos/claude-color.svg",
+  },
+  {
+    id: "gemini",
+    name: "Gemini",
+    description: "Google's Gemini for coding and reasoning.",
+    logo: "/acp-logos/gemini.svg",
   },
 ];
 
