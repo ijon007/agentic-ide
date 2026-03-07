@@ -7,10 +7,12 @@ import {
   FileIcon,
   FolderIcon,
   FolderOpenIcon,
+  GitDiffIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { DiffViewPanel } from "@/components/diff-view-panel";
 import { MOCK_FILE_TREE } from "@/constants/fileTree";
 import { MOCK_PROJECTS } from "@/constants/projects";
 import { useApp } from "@/context/app-context";
@@ -127,10 +129,41 @@ function FileTreeItem({
   );
 }
 
+type FileTreeFilter = "all" | "changed";
+
 export function SidebarRight() {
-  const { activeProject, activeFile, openFile } = useApp();
-  const project = MOCK_PROJECTS.find((p) => p.id === activeProject);
-  const tree = activeProject ? (MOCK_FILE_TREE[activeProject] ?? []) : [];
+  const {
+    activeProject,
+    activeFile,
+    openFile,
+    setActiveProject,
+    sidebarRightView,
+    setSidebarRightView,
+  } = useApp();
+  const [fileTreeFilter, setFileTreeFilter] = useState<FileTreeFilter>("all");
+  const [filesProjectExpanded, setFilesProjectExpanded] = useState<Record<string, boolean>>(() =>
+    MOCK_PROJECTS.reduce<Record<string, boolean>>((acc, p) => {
+      acc[p.id] = true;
+      return acc;
+    })
+  );
+
+  const isFiles = sidebarRightView === "files";
+  const isDiffs = sidebarRightView === "diffs";
+
+  const isFilesProjectExpanded = (projectId: string) => filesProjectExpanded[projectId] !== false;
+  const toggleFilesProject = (projectId: string) => {
+    setFilesProjectExpanded((prev) => ({ ...prev, [projectId]: !isFilesProjectExpanded(projectId) }));
+  };
+
+  const getTreeForProject = (projectId: string): FileTreeNode[] => {
+    const raw = MOCK_FILE_TREE[projectId] ?? [];
+    if (fileTreeFilter !== "changed") return raw;
+    const changedPaths = new Set(
+      (MOCK_PROJECT_DIFFS[projectId] ?? []).map((f) => f.filePath)
+    );
+    return filterTreeToChangedOnly(raw, changedPaths);
+  };
 
   return (
     <aside
@@ -141,37 +174,63 @@ export function SidebarRight() {
       }}
     >
       <div
-        className="flex h-9 items-center justify-between border-b px-3"
+        className="flex items-center justify-between gap-1 p-2"
         style={{ borderColor: "var(--border-subtle)" }}
       >
-        <span
-          className="truncate font-medium text-sm"
-          style={{ color: "var(--text-primary)" }}
-        >
-          {project?.name ?? "No project"}
-        </span>
-        <Button
-          className="text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)"
-          size="icon-xs"
-          variant="ghost"
-        >
-          <ArrowsClockwiseIcon className="size-3.5" />
-        </Button>
+        <div className="flex flex-row items-center gap-1">
+          <Button
+            className={cn(
+              "h-6 min-w-0 gap-1 px-1.5 text-sm text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)",
+              isDiffs && "bg-(--bg-elevated) text-(--text-primary)"
+            )}
+            variant="ghost"
+            onClick={() => setSidebarRightView("diffs")}
+            title="Diffs"
+          >
+            <GitDiffIcon className="size-3.5 shrink-0" />
+            <span className="truncate">Diffs</span>
+          </Button>
+          <Button
+            className={cn(
+              "h-6 min-w-0 gap-1 px-1.5 text-sm text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)",
+              isFiles && "bg-(--bg-elevated) text-(--text-primary)"
+            )}
+            variant="ghost"
+            onClick={() => setSidebarRightView("files")}
+            title="Files"
+          >
+            <FolderIcon className="size-3.5 shrink-0" />
+            <span className="truncate">Files</span>
+          </Button>
+        </div>
+        {isFiles && (
+          <Button
+            variant="ghost"
+            title="Refresh"
+            size="icon"
+          >
+            <ArrowsClockwiseIcon className="size-3" weight="bold" />
+          </Button>
+        )}
       </div>
 
-      <ScrollArea className="scrollbar-hidden flex-1" hideScrollbar>
-        <div className="py-2">
-          {tree.map((node) => (
-            <FileTreeItem
-              activeFile={activeFile}
-              depth={0}
-              key={node.path}
-              node={node}
-              onSelect={openFile}
-            />
-          ))}
-        </div>
-      </ScrollArea>
+      {sidebarRightView === "diffs" ? (
+        <DiffViewPanel />
+      ) : (
+        <ScrollArea className="scrollbar-hidden flex-1" hideScrollbar>
+          <div className="py-2">
+            {tree.map((node) => (
+              <FileTreeItem
+                activeFile={activeFile}
+                depth={0}
+                key={node.path}
+                node={node}
+                onSelect={openFile}
+              />
+            ))}
+          </div>
+        </ScrollArea>
+      )}
     </aside>
   );
 }

@@ -86,7 +86,7 @@ export function SettingsPanel() {
             {activeSection === "account" && <AccountSection />}
             {activeSection === "keyboardShortcuts" && <KeyboardShortcutsSection />}
             {activeSection === "models" && <ModelsSection />}
-            {activeSection === "acpList" && <AcpListSection />}
+            {activeSection === "acpList" && <AcpListSection />} 
           </div>
         </div>
       </DialogContent>

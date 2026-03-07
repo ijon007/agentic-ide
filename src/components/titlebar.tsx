@@ -5,6 +5,7 @@ import {
   FolderIcon,
   GearIcon,
   GearSixIcon,
+  GitDiffIcon,
   MinusIcon,
   SidebarIcon,
   SquareIcon,
@@ -86,8 +87,9 @@ export function Titlebar() {
     activeProject,
     selectedModel,
     setSelectedModel,
-    settingsOpen,
     setSettingsOpen,
+    setSidebarRightView,
+    settingsOpen,
     terminalVisible,
     toggleTerminal,
     terminalLayoutMode,
@@ -229,6 +231,31 @@ export function Titlebar() {
             side="bottom"
           >
             Toggle files (Ctrl+B)
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                className="text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
+                onClick={() => {
+                  setSidebarRightView("diffs");
+                  if (!sidebarRightVisible) {
+                    toggleSidebarRight();
+                  }
+                }}
+                size="icon"
+                variant="ghost"
+              >
+                <GitDiffIcon className="size-5" weight="bold" />
+              </Button>
+            }
+          />
+          <TooltipContent
+            className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
+            side="bottom"
+          >
+            Diff view (Ctrl+Shift+D)
           </TooltipContent>
         </Tooltip>
         <Tooltip>

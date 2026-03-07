@@ -33,6 +33,11 @@ export const SHORTCUT_REGISTRY: ShortcutDef[] = [
     label: "Toggle files sidebar",
     defaultKeys: ["ctrl", "b"],
   },
+  {
+    id: "openDiffView",
+    label: "Diff view",
+    defaultKeys: ["ctrl", "shift", "d"],
+  },
 ];
 
 export function getShortcutById(id: string): ShortcutDef | undefined {

@@ -74,6 +74,7 @@ interface AppState {
   shortcutOverrides: Record<string, string[]>;
   sidebarLeftVisible: boolean;
   sidebarRightVisible: boolean;
+  sidebarRightView: "files" | "diffs";
   syncLayoutsAcrossWindows: boolean;
   systemNotifications: boolean;
   systemTrayIcon: boolean;
@@ -111,6 +112,7 @@ interface AppContextValue extends AppState {
   setSystemNotifications: (v: boolean) => void;
   setSystemTrayIcon: (v: boolean) => void;
   setTerminalLayoutMode: (mode: TerminalLayoutMode) => void;
+  setSidebarRightView: (view: "files" | "diffs") => void;
   setTerminalVisible: (visible: boolean) => void;
   toggleCodePanel: () => void;
   toggleSidebarLeft: () => void;
@@ -159,6 +161,7 @@ function getInitialState(): AppState {
     terminalLayoutMode: "full",
     sidebarLeftVisible: true,
     sidebarRightVisible: false,
+    sidebarRightView: "files",
     settingsOpen: false,
   };
 }
@@ -384,6 +387,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setState((s) => ({ ...s, sidebarRightVisible: !s.sidebarRightVisible }));
   }, []);
 
+  const setSidebarRightView = useCallback((view: "files" | "diffs") => {
+    setState((s) => ({ ...s, sidebarRightView: view }));
+  }, []);
+
   const toggleCodePanel = useCallback(() => {
     setState((s) => ({ ...s, codePanelVisible: !s.codePanelVisible }));
   }, []);
@@ -411,6 +418,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setTerminalVisible,
     setTerminalLayoutMode,
     setSettingsOpen,
+    setSidebarRightView,
     openFile,
     closeFile,
     openChat,

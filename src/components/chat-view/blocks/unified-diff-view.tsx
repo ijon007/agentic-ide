@@ -48,7 +48,7 @@ export function UnifiedDiffView({
   }, [unified, visibleCount, lang]);
 
   return (
-    <div className="max-h-64 overflow-auto font-mono text-[11px]">
+    <div className="max-h-64 overflow-auto font-mono text-sm">
       {visibleLines.slice(0, visibleCount).map((line, i) => (
         <div
           className="flex"

@@ -12,6 +12,8 @@ export function useKeyboardShortcuts() {
   const {
     shortcutOverrides,
     setCommandPaletteOpen,
+    setSidebarRightView,
+    sidebarRightVisible,
     closeChat,
     activeChat,
     openChat,
@@ -69,6 +71,12 @@ export function useKeyboardShortcuts() {
         case "toggleSidebarRight":
           toggleSidebarRight();
           break;
+        case "openDiffView":
+          setSidebarRightView("diffs");
+          if (!sidebarRightVisible) {
+            toggleSidebarRight();
+          }
+          break;
         default:
           break;
       }
@@ -79,6 +87,8 @@ export function useKeyboardShortcuts() {
   }, [
     shortcutOverrides,
     setCommandPaletteOpen,
+    setSidebarRightView,
+    sidebarRightVisible,
     closeChat,
     activeChat,
     openChat,
