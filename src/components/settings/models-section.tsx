@@ -42,9 +42,9 @@ export function ModelsSection() {
             variant="outline"
           >
             {showApiKey ? (
-              <EyeSlashIcon className="size-3.5" />
+              <EyeSlashIcon className="size-4" />
             ) : (
-              <EyeIcon className="size-3.5" />
+              <EyeIcon className="size-4" />
             )}
           </Button>
           <Button
@@ -52,13 +52,13 @@ export function ModelsSection() {
             size="icon"
             variant="outline"
           >
-            <CopyIcon className="size-3.5" />
+            <CopyIcon className="size-4" />
           </Button>
         </div>
       </div>
       <div>
         <p
-          className="mb-3 text-[11px]"
+          className="mb-3 text-sm"
           style={{ color: "var(--text-secondary)" }}
         >
           Toggle which models appear in the model selector.
@@ -66,14 +66,14 @@ export function ModelsSection() {
         <div className="flex flex-col gap-2">
           {MOCK_MODELS.map((model) => (
             <div
-              className="flex items-center justify-between gap-4 rounded-lg border p-2"
+              className="flex items-center justify-between gap-4 rounded border p-2"
               key={model.id}
               style={{
                 borderColor: "var(--border-subtle)",
                 backgroundColor: "var(--bg-elevated)",
               }}
             >
-              <div className="min-w-0 flex-1">
+              <div className="flex flex-col items-start justify-center">
                 <p
                   className="flex items-center gap-1.5 text-xs font-medium"
                   style={{ color: "var(--text-primary)" }}
