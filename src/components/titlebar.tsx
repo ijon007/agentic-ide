@@ -1,10 +1,8 @@
 "use client";
 
 import {
-  ChatCircleIcon,
-  FolderIcon,
-  GearIcon,
   GearSixIcon,
+  GitCommitIcon,
   GitDiffIcon,
   MinusIcon,
   SidebarIcon,
@@ -87,6 +85,7 @@ export function Titlebar() {
     activeProject,
     selectedModel,
     setSelectedModel,
+    setCommitsDialogOpen,
     setSettingsOpen,
     setSidebarRightView,
     settingsOpen,
@@ -238,16 +237,11 @@ export function Titlebar() {
             render={
               <Button
                 className="text-(--text-secondary) hover:bg-(--bg-elevated) hover:text-(--text-primary)"
-                onClick={() => {
-                  setSidebarRightView("diffs");
-                  if (!sidebarRightVisible) {
-                    toggleSidebarRight();
-                  }
-                }}
+                onClick={() => setCommitsDialogOpen(true)}
                 size="icon"
                 variant="ghost"
               >
-                <GitDiffIcon className="size-5" weight="bold" />
+                <GitCommitIcon className="size-5" weight="bold" />
               </Button>
             }
           />
@@ -255,7 +249,7 @@ export function Titlebar() {
             className="border border-(--border-subtle) bg-(--bg-overlay) text-[11px] text-(--text-primary)"
             side="bottom"
           >
-            Diff view (Ctrl+Shift+D)
+            Commit changes
           </TooltipContent>
         </Tooltip>
         <Tooltip>

@@ -60,6 +60,7 @@ interface AppState {
   agentMode: AgentModeId;
   chatListMeta: Record<string, ChatListMeta>;
   codePanelVisible: boolean;
+  commitsDialogOpen: boolean;
   commandPaletteOpen: boolean;
   completionSound: boolean;
   enabledModelIds: string[];
@@ -91,6 +92,7 @@ interface AppContextValue extends AppState {
   setActiveFile: (path: string | null) => void;
   setActiveProject: (id: string | null) => void;
   setChatListMeta: (chatId: string, meta: Partial<ChatListMeta>) => void;
+  setCommitsDialogOpen: (open: boolean) => void;
   setCommandPaletteOpen: (open: boolean) => void;
   setCompletionSound: (v: boolean) => void;
   setEnabledModelIds: (ids: string[] | ((prev: string[]) => string[])) => void;
@@ -148,6 +150,7 @@ function getInitialState(): AppState {
     openFiles: [],
     activeFile: null,
     codePanelVisible: false,
+    commitsDialogOpen: false,
     commandPaletteOpen: false,
     completionSound: persisted.completionSound ?? true,
     enabledModelIds: persisted.enabledModelIds ?? defaultModelIds,
@@ -249,6 +252,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const setSettingsOpen = useCallback((open: boolean) => {
     setState((s) => ({ ...s, settingsOpen: open }));
+  }, []);
+
+  const setCommitsDialogOpen = useCallback((open: boolean) => {
+    setState((s) => ({ ...s, commitsDialogOpen: open }));
   }, []);
 
   const setCommandPaletteOpen = useCallback((open: boolean) => {
@@ -417,6 +424,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setSystemTrayIcon,
     setTerminalVisible,
     setTerminalLayoutMode,
+    setCommitsDialogOpen,
     setSettingsOpen,
     setSidebarRightView,
     openFile,

@@ -1,6 +1,7 @@
 "use client";
 
 import { CenterPanel } from "@/components/center-panel";
+import { CommitsDialogPanel } from "@/components/commits-dialog";
 import { GlobalCommandPalette } from "@/components/command-palette";
 import { SettingsPanel } from "@/components/settings/settings-panel";
 import { SidebarLeft } from "@/components/sidebar-left";
@@ -41,7 +42,7 @@ function SidebarsAndCenter() {
               : "100"
         }
         minSize="25"
-      >
+      >    
         <CenterPanel />
       </ResizablePanel>
       {sidebarRightVisible && (
@@ -266,6 +267,7 @@ function AppShellInner() {
       <Titlebar />
       <MainContentLayout />
       <SettingsPanel />
+      <CommitsDialogPanel />
       <GlobalCommandPalette />
     </div>
   );
