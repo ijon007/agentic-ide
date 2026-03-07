@@ -285,7 +285,7 @@ function ComboboxSearchInput({
     <div className="border-b border-foreground/15 p-1.5">
       <ComboboxPrimitive.Input
         className={cn(
-          "flex h-8 w-full rounded-md border border-foreground/15 bg-transparent px-2.5 text-xs outline-none placeholder:text-muted-foreground focus:border-foreground/30 focus:ring-2 focus:ring-foreground/10",
+          "flex h-6 w-full rounded-md border border-foreground/15 bg-transparent px-2.5 text-xs outline-none placeholder:text-muted-foreground focus:border-foreground/30 focus:ring-2 focus:ring-foreground/10",
           className
         )}
         data-slot="combobox-search-input"

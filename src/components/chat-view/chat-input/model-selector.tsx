@@ -82,7 +82,7 @@ export function ModelSelector({
                     <span className="flex flex-1 items-center gap-1.5">
                       {m.name}
                       {m.thinking && (
-                        <BrainIcon className="size-3.5 shrink-0 text-muted-foreground" />
+                        <BrainIcon className="size-3 text-muted-foreground" weight="bold" />
                       )}
                     </span>
                   }
@@ -90,7 +90,7 @@ export function ModelSelector({
                 <TooltipContent
                   side="right"
                   sideOffset={8}
-                  className="max-w-[100px] bg-popover text-popover-foreground border border-border/80 shadow-md p-2"
+                  className="max-w-[150px] bg-popover text-popover-foreground border border-border/80 shadow-md p-2"
                 >
                   <ModelInfoPopup model={m} />
                 </TooltipContent>

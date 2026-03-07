@@ -32,7 +32,7 @@ export function AgentModeSelector({
           />
         }
       >
-        <Icon className="size-3.5 shrink-0" />
+        <Icon className="size-3" weight="bold" />
         {current.label}
         <CaretDownIcon className="size-3 shrink-0 opacity-70" />
       </DropdownMenuTrigger>
@@ -52,7 +52,7 @@ export function AgentModeSelector({
                 value={mode.id}
                 className="cursor-pointer"
               >
-                <ModeIcon className="size-3.5 shrink-0" />
+                <ModeIcon className="size-3" weight="bold" />
                 {mode.label}
               </DropdownMenuRadioItem>
             );

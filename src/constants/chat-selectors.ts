@@ -1,13 +1,15 @@
 import {
-  ChatCircleIcon,
+  ChatsIcon,
   CodeIcon,
   InfinityIcon,
   ListChecksIcon,
 } from "@phosphor-icons/react";
 import type { ComponentType } from "react";
 
+export type AcpIconProps = { className?: string; weight?: "thin" | "light" | "regular" | "bold" | "fill" | "duotone" };
+
 /** Placeholder until official ACP icons are added. */
-const AcpPlaceholderIcon = CodeIcon as ComponentType<{ className?: string }>;
+const AcpPlaceholderIcon = CodeIcon as ComponentType<AcpIconProps>;
 
 export type AgentModeId = "agent" | "plan" | "ask";
 
@@ -15,13 +17,13 @@ export interface AcpItem {
   id: string;
   name: string;
   description?: string;
-  Icon: ComponentType<{ className?: string }>;
+  Icon: ComponentType<AcpIconProps>;
 }
 
 export interface AgentModeItem {
   id: AgentModeId;
   label: string;
-  Icon: ComponentType<{ className?: string }>;
+  Icon: ComponentType<AcpIconProps>;
 }
 
 export const MOCK_ACP_LIST: AcpItem[] = [
@@ -54,7 +56,7 @@ export const MOCK_ACP_LIST: AcpItem[] = [
 export const AGENT_MODES: AgentModeItem[] = [
   { id: "agent", label: "Agent", Icon: InfinityIcon },
   { id: "plan", label: "Plan", Icon: ListChecksIcon },
-  { id: "ask", label: "Ask", Icon: ChatCircleIcon },
+  { id: "ask", label: "Ask", Icon: ChatsIcon },
 ];
 
 export const DEFAULT_ACP_ID = MOCK_ACP_LIST[0]?.id ?? "cursor";

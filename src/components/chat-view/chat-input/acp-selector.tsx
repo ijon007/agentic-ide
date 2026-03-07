@@ -41,7 +41,7 @@ export function AcpSelector({
           />
         }
       >
-        {Icon && <Icon className="size-3.5 shrink-0" />}
+        {Icon && <Icon className="size-3" weight="bold" />}
         {selected?.name ?? "Select ACP"}
         <CaretDownIcon className="size-3 shrink-0 opacity-70" />
       </DropdownMenuTrigger>
@@ -61,7 +61,7 @@ export function AcpSelector({
                 value={item.id}
                 className="cursor-pointer"
               >
-                <ItemIcon className="size-3.5 shrink-0" />
+                <ItemIcon className="size-3" weight="bold" />
                 {item.name}
               </DropdownMenuRadioItem>
             );
