@@ -42,18 +42,9 @@ export function ChatInputBottomBar({
   return (
     <div className="flex items-center justify-between gap-3 px-2 py-2">
       <div className="flex items-center gap-1">
-        <AcpSelector
-          value={selectedAcpId}
-          onValueChange={setSelectedAcpId}
-        />
-        <AgentModeSelector
-          value={agentMode}
-          onValueChange={setAgentMode}
-        />
-        <ModelSelector
-          value={model}
-          onValueChange={setSelectedModel}
-        />
+        <AcpSelector value={selectedAcpId} onValueChange={setSelectedAcpId} />
+        <AgentModeSelector value={agentMode} onValueChange={setAgentMode} />
+        <ModelSelector value={model} onValueChange={setSelectedModel} />
       </div>
       <div className="flex items-center gap-1">
         <input

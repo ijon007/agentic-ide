@@ -27,8 +27,8 @@ export function AgentModeSelector({
       <DropdownMenuTrigger
         render={
           <Button
-            className="gap-1.5 rounded-full"
-            variant="secondary"
+            className="gap-1.5"
+            variant="ghost"
           />
         }
       >

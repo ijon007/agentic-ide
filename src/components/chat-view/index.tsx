@@ -7,6 +7,7 @@ import type { Attachment } from "@/types/attachment";
 import type { ChatMessage, DiffBlock } from "@/types/message";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChatInput } from "./chat-input";
+import { EnvironmentBranchBar } from "./chat-input/environment-branch-bar";
 import { MessageBubble } from "./message-bubble";
 import { FilesChangedRibbon } from "./files-changed-ribbon";
 
@@ -79,21 +80,24 @@ export function ChatView({ chatId: chatIdProp }: ChatViewProps = {}) {
               NOX Agent
             </span>
           </div>
-          <ChatInput
-            attachments={attachments}
-            compact={false}
-            input={input}
-            setInput={setInput}
-            isRunning={isRunning}
-            setIsRunning={setIsRunning}
-            textareaRef={textareaRef}
-            model={model}
-            onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
-            onRemoveAttachment={(id) =>
-              setAttachments((prev) => prev.filter((x) => x.id !== id))
-            }
-            onSend={handleSend}
-          />
+          <div className="flex w-full max-w-4xl flex-col">
+            <ChatInput
+              attachments={attachments}
+              compact={false}
+              input={input}
+              setInput={setInput}
+              isRunning={isRunning}
+              setIsRunning={setIsRunning}
+              textareaRef={textareaRef}
+              model={model}
+              onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
+              onRemoveAttachment={(id) =>
+                setAttachments((prev) => prev.filter((x) => x.id !== id))
+              }
+              onSend={handleSend}
+            />
+            <EnvironmentBranchBar />
+          </div>
         </div>
       </div>
     );
@@ -142,21 +146,24 @@ export function ChatView({ chatId: chatIdProp }: ChatViewProps = {}) {
           </div>
         )}
         <div className="flex w-full justify-center px-4 py-3 pt-1">
-          <ChatInput
-            attachments={attachments}
-            compact
-            input={input}
-            setInput={setInput}
-            isRunning={isRunning}
-            setIsRunning={setIsRunning}
-            textareaRef={textareaRef}
-            model={model}
-            onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
-            onRemoveAttachment={(id) =>
-              setAttachments((prev) => prev.filter((x) => x.id !== id))
-            }
-            onSend={handleSend}
-          />
+          <div className="flex w-full max-w-4xl flex-col">
+            <ChatInput
+              attachments={attachments}
+              compact
+              input={input}
+              setInput={setInput}
+              isRunning={isRunning}
+              setIsRunning={setIsRunning}
+              textareaRef={textareaRef}
+              model={model}
+              onAddAttachment={(a) => setAttachments((prev) => [...prev, a])}
+              onRemoveAttachment={(id) =>
+                setAttachments((prev) => prev.filter((x) => x.id !== id))
+              }
+              onSend={handleSend}
+            />
+            <EnvironmentBranchBar />
+          </div>
         </div>
       </div>
     </div>
