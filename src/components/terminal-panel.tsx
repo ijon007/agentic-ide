@@ -5,8 +5,10 @@ import { FitAddon } from "@xterm/addon-fit";
 import { Terminal } from "@xterm/xterm";
 import { PlusIcon, TerminalIcon, XIcon } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
 import { spawn, type IPty } from "tauri-pty";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const XTERM_THEME = {
   background: "#0e0e0e",
@@ -17,30 +19,32 @@ const XTERM_THEME = {
   selectionForeground: "#e8e8e8",
 };
 
-const GIT_BASH_PATH = "C:\\Program Files\\Git\\bin\\bash.exe";
-const GIT_BASH_PATH_ALT = "C:\\Program Files (x86)\\Git\\bin\\bash.exe";
-
-function getShell(): { file: string; args: string[]; fallback?: { file: string; args: string[] } } {
+function getShell(): { file: string; args: string[] } {
   if (typeof navigator !== "undefined" && navigator.platform.toLowerCase().startsWith("win")) {
-    return {
-      file: GIT_BASH_PATH,
-      args: ["--login", "-i"],
-      fallback: { file: "powershell.exe", args: [] },
-    };
+    return { file: "powershell.exe", args: [] };
   }
   return { file: "/bin/bash", args: ["--login"] };
 }
 
-function spawnShell(cols: number, rows: number): IPty {
-  const { file, args, fallback } = getShell();
-  try {
-    return spawn(file, args, { cols, rows });
-  } catch {
-    if (fallback) {
-      return spawn(fallback.file, fallback.args, { cols, rows });
+async function spawnShell(cols: number, rows: number): Promise<IPty> {
+  const c = Math.max(2, Math.min(cols, 65535));
+  const r = Math.max(1, Math.min(rows, 65535));
+  const opts = { cols: c, rows: r };
+
+  if (typeof navigator !== "undefined" && navigator.platform.toLowerCase().startsWith("win")) {
+    try {
+      const [file, args] = await invoke<[string, string[]]>("resolve_windows_shell", {
+        cols: c,
+        rows: r,
+      });
+      return spawn(file, args, opts);
+    } catch {
+      return spawn("powershell.exe", [], opts);
     }
-    throw new Error(`Failed to spawn shell: ${file}`);
   }
+
+  const { file, args } = getShell();
+  return spawn(file, args, opts);
 }
 
 function useIsTauri(): boolean {
@@ -96,11 +100,12 @@ function TerminalInstance({ tabId, isVisible }: TerminalInstanceProps) {
   useEffect(() => {
     if (!containerRef.current) return;
 
+    let cancelled = false;
     const container = containerRef.current;
     const term = new Terminal({
       theme: XTERM_THEME,
       fontFamily: "var(--font-geist-mono), ui-monospace, monospace",
-      fontSize: 12,
+      fontSize: 14,
       cursorBlink: true,
     });
     termRef.current = term;
@@ -109,56 +114,81 @@ function TerminalInstance({ tabId, isVisible }: TerminalInstanceProps) {
     fitAddonRef.current = fitAddon;
     term.loadAddon(fitAddon);
     term.open(container);
-    fitAddon.fit();
+    const scheduleFit = () => {
+      requestAnimationFrame(() => {
+        if (!cancelled && fitAddonRef.current) fitAddonRef.current.fit();
+      });
+    };
+    scheduleFit();
 
-    let pty: IPty;
-    try {
-      pty = spawnShell(term.cols, term.rows);
-    } catch (err) {
-      term.dispose();
-      fitAddonRef.current = null;
-      termRef.current = null;
-      return;
-    }
-    ptyRef.current = pty;
+    (async () => {
+      let pty: IPty;
+      try {
+        pty = await spawnShell(term.cols, term.rows);
+      } catch {
+        if (!cancelled) {
+          term.dispose();
+          fitAddonRef.current = null;
+          termRef.current = null;
+        }
+        return;
+      }
+      if (cancelled) {
+        pty.kill();
+        return;
+      }
+      ptyRef.current = pty;
 
-    const dataDisposable = pty.onData((data: Uint8Array) => {
-      term.write(data);
-    });
-    dataDisposableRef.current = dataDisposable;
+      const dataDisposable = pty.onData((data: Uint8Array) => {
+        term.write(data);
+      });
+      dataDisposableRef.current = dataDisposable;
 
-    term.onData((data: string) => {
-      pty.write(data);
-    });
+      term.onData((data: string) => {
+        pty.write(data);
+      });
 
-    const resizeObserver = new ResizeObserver(() => {
-      fitAddon.fit();
-      pty.resize(term.cols, term.rows);
-    });
-    resizeObserver.observe(container);
-    resizeObserverRef.current = resizeObserver;
+      const resizeObserver = new ResizeObserver(() => {
+        if (!cancelled && fitAddonRef.current) {
+          fitAddonRef.current.fit();
+          if (ptyRef.current) ptyRef.current.resize(term.cols, term.rows);
+        }
+      });
+      resizeObserver.observe(container);
+      resizeObserverRef.current = resizeObserver;
+      scheduleFit();
+    })();
 
     return () => {
+      cancelled = true;
       cleanup();
     };
   }, [tabId, cleanup]);
 
   useEffect(() => {
     if (!isVisible || !containerRef.current || !fitAddonRef.current || !termRef.current) return;
-    fitAddonRef.current.fit();
-    if (ptyRef.current) {
-      ptyRef.current.resize(termRef.current.cols, termRef.current.rows);
-    }
+    const fit = () => {
+      if (!fitAddonRef.current || !termRef.current) return;
+      fitAddonRef.current.fit();
+      if (ptyRef.current) ptyRef.current.resize(termRef.current.cols, termRef.current.rows);
+    };
+    fit();
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(fit);
+    });
+    return () => cancelAnimationFrame(id);
   }, [isVisible]);
 
   return (
     <div
       ref={containerRef}
-      className="terminal-container size-full min-h-0 overflow-hidden p-2"
+      className="terminal-container size-full min-h-0 overflow-hidden p-3"
       style={{
         visibility: isVisible ? "visible" : "hidden",
         position: "absolute",
         inset: 0,
+        width: "100%",
+        height: "100%",
         backgroundColor: "var(--bg-base)",
       }}
     />
@@ -229,17 +259,21 @@ export function TerminalPanel() {
       }}
     >
       <div
-        className="flex h-8 shrink-0 items-center gap-0.5 border-b px-1"
-        style={{ borderColor: "var(--border-subtle)" }}
+        className="flex h-8 shrink-0 items-center gap-0.5 px-1"
+        style={{ backgroundColor: "var(--bg-surface)" }}
       >
-        <div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">
+        <div className="flex min-w-0 flex-1 items-stretch gap-0.5 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              className="flex items-center gap-1.5 rounded px-2 py-1.5 font-mono text-[11px] transition-colors hover:bg-(--bg-elevated)"
+              className={cn(
+                "flex items-center gap-1.5 border-r px-2 py-1.5 font-mono text-[11px] transition-colors hover:bg-(--bg-elevated)",
+                activeId !== tab.id && "border-b"
+              )}
               style={{
-                color: activeId === tab.id ? "var(--text-primary)" : "var(--text-secondary)",
-                backgroundColor: activeId === tab.id ? "var(--bg-elevated)" : "transparent",
+                borderColor: "var(--border-subtle)",
+                color: activeId === tab.id ? "var(--text-primary)" : "var(--text-muted)",
+                backgroundColor: activeId === tab.id ? "var(--bg-base)" : "transparent",
               }}
               type="button"
               onClick={() => setActiveTabId(tab.id)}
@@ -277,7 +311,10 @@ export function TerminalPanel() {
           New
         </Button>
       </div>
-      <div className="terminal-panel-content min-h-0 flex-1">
+      <div
+        className="terminal-panel-content relative min-h-0 flex-1"
+        style={{ backgroundColor: "var(--bg-base)" }}
+      >
         {tabs.map((tab) => (
           <TerminalInstance
             key={tab.id}

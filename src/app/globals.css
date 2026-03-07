@@ -198,7 +198,20 @@ html.dark {
   }
 }
 
-/* In-app terminal (xterm.js) */
+/* In-app terminal (xterm.js) — crisp rendering, no stretch */
+.terminal-container {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+.terminal-container .xterm {
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
 .terminal-container .xterm-viewport {
   background-color: var(--bg-base) !important;
+}
+.terminal-container .xterm-rows {
+  font-smooth: always;
 }
