@@ -46,7 +46,7 @@ function SidebarsAndCenter() {
       </ResizablePanel>
       {sidebarRightVisible && (
         <ResizablePanel
-          className="min-w-[100px]"
+          className="min-w-[200px]"
           defaultSize="12"
           maxSize="35"
           minSize="8"
@@ -137,7 +137,7 @@ function MainContentLayout() {
         </ResizablePanel>
         {sidebarRightVisible && (
           <ResizablePanel
-            className="min-w-[100px]"
+            className="min-w-[200px]"
             defaultSize="12"
             maxSize="35"
             minSize="8"
@@ -184,7 +184,7 @@ function MainContentLayout() {
                 </ResizablePanel>
                 {sidebarRightVisible && (
                   <ResizablePanel
-                    className="min-w-[100px]"
+                    className="min-w-[200px]"
                     defaultSize="28"
                     maxSize="50"
                     minSize="8"
@@ -245,7 +245,7 @@ function MainContentLayout() {
         </ResizablePanel>
         {sidebarRightVisible && (
           <ResizablePanel
-            className="min-w-[100px]"
+            className="min-w-[200px]"
             defaultSize="12"
             maxSize="35"
             minSize="8"

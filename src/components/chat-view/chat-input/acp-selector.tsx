@@ -1,7 +1,6 @@
 "use client";
 
 import { CaretDownIcon } from "@phosphor-icons/react";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,20 +31,20 @@ export function AcpSelector({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button
-          className={cn("gap-1.5 min-w-24 justify-between text-xs", className)}
-          variant="ghost"
-        >
-          {selected &&
-            (selected.Icon ? (
-              <selected.Icon className="size-4 shrink-0" />
-            ) : selected.logo ? (
-              <img src={selected.logo} alt="" className="size-4 object-contain" />
-            ) : null)}
-          {selected?.name ?? "Select ACP"}
-          <CaretDownIcon className="size-3" />
-        </Button>
+      <DropdownMenuTrigger
+        className={cn(
+          "inline-flex h-7 min-w-24 shrink-0 cursor-pointer select-none items-center justify-between gap-1.5 rounded-md border border-transparent px-2 text-xs outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/30 [&_svg]:shrink-0",
+          className
+        )}
+      >
+        {selected &&
+          (selected.Icon ? (
+            <selected.Icon className="size-4 shrink-0" />
+          ) : selected.logo ? (
+            <img src={selected.logo} alt="" className="size-4 object-contain" />
+          ) : null)}
+        {selected?.name ?? "Select ACP"}
+        <CaretDownIcon className="size-3" />
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="start"
