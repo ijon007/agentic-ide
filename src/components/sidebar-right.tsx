@@ -15,9 +15,30 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DiffViewPanel } from "@/components/diff-view-panel";
 import { MOCK_FILE_TREE } from "@/constants/fileTree";
 import { MOCK_PROJECTS } from "@/constants/projects";
+import { MOCK_PROJECT_DIFFS } from "@/constants/projectDiffs";
 import { useApp } from "@/context/app-context";
 import { cn } from "@/lib/utils";
 import type { FileTreeNode } from "@/types/fileTree";
+
+function filterTreeToChangedOnly(
+  nodes: FileTreeNode[],
+  changedPaths: Set<string>
+): FileTreeNode[] {
+  const result: FileTreeNode[] = [];
+  for (const node of nodes) {
+    if (node.type === "file") {
+      if (changedPaths.has(node.path)) result.push(node);
+    } else {
+      const filteredChildren = node.children
+        ? filterTreeToChangedOnly(node.children, changedPaths)
+        : [];
+      if (filteredChildren.length > 0) {
+        result.push({ ...node, children: filteredChildren });
+      }
+    }
+  }
+  return result;
+}
 
 function FileTreeItem({
   node,
@@ -145,7 +166,7 @@ export function SidebarRight() {
     MOCK_PROJECTS.reduce<Record<string, boolean>>((acc, p) => {
       acc[p.id] = true;
       return acc;
-    })
+    }, {})
   );
 
   const isFiles = sidebarRightView === "files";
@@ -174,36 +195,65 @@ export function SidebarRight() {
       }}
     >
       <div
-        className="flex items-center justify-between gap-1 p-2"
+        className="flex flex-col gap-1.5 border-b px-2 py-2"
         style={{ borderColor: "var(--border-subtle)" }}
       >
-        <div className="flex flex-row items-center gap-1">
-          <Button
-            className={cn(
-              "h-6 min-w-0 gap-1 px-1.5 text-sm text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)",
-              isDiffs && "bg-(--bg-elevated) text-(--text-primary)"
-            )}
-            variant="ghost"
-            onClick={() => setSidebarRightView("diffs")}
-            title="Diffs"
-          >
-            <GitDiffIcon className="size-3.5 shrink-0" />
-            <span className="truncate">Diffs</span>
-          </Button>
-          <Button
-            className={cn(
-              "h-6 min-w-0 gap-1 px-1.5 text-sm text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)",
-              isFiles && "bg-(--bg-elevated) text-(--text-primary)"
-            )}
-            variant="ghost"
-            onClick={() => setSidebarRightView("files")}
-            title="Files"
-          >
-            <FolderIcon className="size-3.5 shrink-0" />
-            <span className="truncate">Files</span>
-          </Button>
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex items-center gap-0.5">
+            <Button
+              className={cn(
+                "h-6 min-w-0 gap-1 px-1.5 text-sm text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)",
+                isDiffs && "bg-(--bg-elevated) text-(--text-primary)"
+              )}
+              variant="ghost"
+              onClick={() => setSidebarRightView("diffs")}
+              title="Diffs"
+            >
+              <GitDiffIcon className="size-3.5 shrink-0" />
+              <span className="truncate">Diffs</span>
+            </Button>
+            <Button
+              className={cn(
+                "h-6 min-w-0 gap-1 px-1.5 text-sm text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)",
+                isFiles && "bg-(--bg-elevated) text-(--text-primary)"
+              )}
+              variant="ghost"
+              onClick={() => setSidebarRightView("files")}
+              title="Files"
+            >
+              <FolderIcon className="size-3.5 shrink-0" />
+              <span className="truncate">Files</span>
+            </Button>
+          </div>
         </div>
         {isFiles && (
+          <div className="flex items-center justify-between">
+          <div className="flex items-center gap-0.5">
+            <button
+              type="button"
+              className={cn(
+                "rounded px-1.5 py-0.5 text-sm font-medium transition-colors cursor-pointer",
+                fileTreeFilter === "all"
+                  ? "bg-(--bg-elevated) text-(--text-primary)"
+                  : "text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)"
+              )}
+              onClick={() => setFileTreeFilter("all")}
+            >
+              All
+            </button>
+            <button
+              type="button"
+              className={cn(
+                "rounded px-1.5 py-0.5 text-sm font-medium transition-colors cursor-pointer",
+                fileTreeFilter === "changed"
+                  ? "bg-(--bg-elevated) text-(--text-primary)"
+                  : "text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-secondary)"
+              )}
+              onClick={() => setFileTreeFilter("changed")}
+            >
+              Changed
+            </button>
+          </div>
           <Button
             variant="ghost"
             title="Refresh"
@@ -211,6 +261,7 @@ export function SidebarRight() {
           >
             <ArrowsClockwiseIcon className="size-3" weight="bold" />
           </Button>
+          </div>
         )}
       </div>
 
@@ -218,16 +269,62 @@ export function SidebarRight() {
         <DiffViewPanel />
       ) : (
         <ScrollArea className="scrollbar-hidden flex-1" hideScrollbar>
-          <div className="py-2">
-            {tree.map((node) => (
-              <FileTreeItem
-                activeFile={activeFile}
-                depth={0}
-                key={node.path}
-                node={node}
-                onSelect={openFile}
-              />
-            ))}
+          <div className="py-1">
+            {MOCK_PROJECTS.map((project) => {
+              const expanded = isFilesProjectExpanded(project.id);
+              const tree = getTreeForProject(project.id);
+              return (
+                <div
+                  key={project.id}
+                  className="border-b last:border-b-0"
+                  style={{ borderColor: "var(--border-subtle)" }}
+                >
+                  <button
+                    type="button"
+                    className="flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-left transition-colors hover:bg-(--bg-elevated)"
+                    onClick={() => toggleFilesProject(project.id)}
+                    aria-expanded={expanded}
+                  >
+                    {expanded ? (
+                      <CaretDownIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
+                    ) : (
+                      <CaretRightIcon className="size-3.5 shrink-0" style={{ color: "var(--text-muted)" }} />
+                    )}
+                    <span
+                      className="min-w-0 flex-1 truncate font-medium text-[11px] uppercase tracking-wider"
+                      style={{ color: "var(--text-secondary)" }}
+                    >
+                      {project.name}
+                    </span>
+                  </button>
+                  {expanded && (
+                    <div className="pb-1 pl-0.5">
+                      {tree.length === 0 ? (
+                        <div
+                          className="px-2 py-3 text-center text-[11px]"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          {fileTreeFilter === "changed" ? "No changed files" : "No files"}
+                        </div>
+                      ) : (
+                        tree.map((node) => (
+                          <FileTreeItem
+                            activeFile={activeFile}
+                            depth={0}
+                            key={`${project.id}-${node.path}`}
+                            node={node}
+                            onSelect={(path) => {
+                              setActiveProject(project.id);
+                              openFile(path);
+                            }}
+                          />
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </ScrollArea>
       )}
