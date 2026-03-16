@@ -33,12 +33,70 @@ async function spawnShell(cols: number, rows: number): Promise<IPty> {
 
   if (typeof navigator !== "undefined" && navigator.platform.toLowerCase().startsWith("win")) {
     try {
+      // #region agent log
+      fetch("http://127.0.0.1:7379/ingest/ba5b2d7b-18f7-40f3-b5f7-4f13f6345277", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "67aba0",
+        },
+        body: JSON.stringify({
+          sessionId: "67aba0",
+          runId: "pre-fix",
+          hypothesisId: "H4",
+          location: "src/components/terminal-panel.tsx:spawnShell",
+          message: "about_to_invoke_resolve_windows_shell",
+          data: { cols: c, rows: r, navigatorPlatform: navigator.platform },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion agent log
+
       const [file, args] = await invoke<[string, string[]]>("resolve_windows_shell", {
         cols: c,
         rows: r,
       });
+
+      // #region agent log
+      fetch("http://127.0.0.1:7379/ingest/ba5b2d7b-18f7-40f3-b5f7-4f13f6345277", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "67aba0",
+        },
+        body: JSON.stringify({
+          sessionId: "67aba0",
+          runId: "pre-fix",
+          hypothesisId: "H4",
+          location: "src/components/terminal-panel.tsx:spawnShell",
+          message: "invoke_resolve_windows_shell_result",
+          data: { file, args },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion agent log
+
       return spawn(file, args, opts);
-    } catch {
+    } catch (error) {
+      // #region agent log
+      fetch("http://127.0.0.1:7379/ingest/ba5b2d7b-18f7-40f3-b5f7-4f13f6345277", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Debug-Session-Id": "67aba0",
+        },
+        body: JSON.stringify({
+          sessionId: "67aba0",
+          runId: "pre-fix",
+          hypothesisId: "H5",
+          location: "src/components/terminal-panel.tsx:spawnShell",
+          message: "invoke_resolve_windows_shell_error",
+          data: { error: String(error) },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion agent log
+
       return spawn("powershell.exe", [], opts);
     }
   }
